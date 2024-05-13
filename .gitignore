@@ -1,0 +1,22 @@
+<<<<<<< HEAD
+<<<<<<< HEAD
+env/
+__pycache__/
+=======
+<<<<<<< HEAD
+*.env
+env/
+Flask/__pycache__/
+*.pyc
+=======
+env/
+
+*.env
+>>>>>>> origin/main
+>>>>>>> bb81c5ef37b49b3b376cc1a9dc923aa396b4c05b
+=======
+env/
+
+*.env
+__pycache__/
+>>>>>>> michelangelo_florio

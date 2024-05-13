@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Soccer &mdash; Website by Colorlib</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="{{ url_for('static',filename='basket/fonts/icomoon/style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static',filename='basket/css/bootstrap/bootstrap.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static',filename='basket/css/jquery-ui.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static',filename='basket/css/owl.carousel.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static',filename='basket/css/owl.theme.default.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static',filename='basket/css/jquery.fancybox.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static',filename='basket/css/bootstrap-datepicker.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static',filename='basket/fonts/flaticon/font/flaticon.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static',filename='basket/css/aos.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static',filename='basket/css/style.css') }}">
+
+  <style type="text/css">
+    .stat{
+      margin-bottom: 0pt;
+      margin-top: 0pt;
+    }
+  </style>
+  
+</head>
+
+<body>
+
+  <div class="site-wrap">
+
+    <div class="site-mobile-menu site-navbar-target">
+      <div class="site-mobile-menu-header">
+        <div class="site-mobile-menu-close">
+          <span class="icon-close2 js-menu-toggle"></span>
+        </div>
+      </div>
+      <div class="site-mobile-menu-body"></div>
+    </div>
+
+
+    <header class="site-navbar py-4" role="banner">
+
+      <div class="container">
+        <div class="d-flex align-items-center">
+          <div class="site-logo">
+            <a href="/">
+              <img src="images/logo.png" alt="Logo">
+            </a>
+          </div>
+          <div class="ml-auto">
+            <nav class="site-navigation position-relative text-right" role="navigation">
+              <ul class="site-menu main-menu js-clone-nav mr-auto d-none d-lg-block">
+                <li><a href="/" class="nav-link">Home</a></li>
+                <li class="active"><a href="matches.html" class="nav-link">Matches</a></li>
+                <li><a href="players.html" class="nav-link">Players</a></li>
+                <li><a href="blog.html" class="nav-link">Blog</a></li>
+                <li><a href="contact.html" class="nav-link">Contact</a></li>
+              </ul>
+            </nav>
+
+            <a href="#" class="d-inline-block d-lg-none site-menu-toggle js-menu-toggle text-black float-right text-white"><span
+                class="icon-menu h3 text-white"></span></a>
+          </div>
+        </div>
+      </div>
+
+    </header>
+
+    <div class="hero overlay" style="background-image: url('images/bg_3.jpg');">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-lg-8 mx-auto text-center">
+            <h1 class="text-white">Match Prediction</h1>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Soluta, molestias repudiandae pariatur.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    
+    
+    <div class="container">
+      
+
+      <div class="row">
+        <div class="col-lg-12">
+          
+          <div class="d-flex team-vs">
+            <span class="score" id="score"></span>
+            <div class="team-1 w-50">
+              <div class="team-details w-100 text-center">
+                <img id="home_logo" src="" alt="Image" class="img-fluid">
+                <h3 id="home_stats" home_stats="{{ home_stats }}"></h3>
+                <ul class="list-unstyled">
+                  <li class="stat" id="home_win_pct" home_win_pct="{{ home_win_pct }}"></li>
+                  <li class="stat" id="home_strenght" away_win_pct="{{ home_strenght }}"></li>
+                </ul>
+              </div>
+            </div>
+            <div class="w-50" style="margin-top: 124pt;">
+              <div class="w-100 text-center">
+                <ul class="list-unstyled">
+                  <li class="stat">Win Probability</li>
+                  <li class="stat">Starting Lineup strenght</li>
+                  <li class="stat" id="ref" first_official="{{ first_official }}"></li>
+                </ul>
+              </div>
+            </div>
+            <div class="team-2 w-50">
+              <div class="team-details w-100 text-center">
+                <img id="away_logo" src="" alt="Image" class="img-fluid">
+                <h3 id="away_stats" away_stats="{{ away_stats }}"></h3>
+                <ul class="list-unstyled">
+                  <li class="stat" id="away_win_pct" away_win_pct="{{ away_win_pct }}"></li>
+                  <li class="stat" id="away_strenght" away_win_pct="{{ away_strenght }}"></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+
+    
+    <div class="site-section bg-dark">
+      <div class="container">
+        
+        <div class="row mb-5" id="next_match_box">
+          <div class="col-lg-12">
+            <div class="widget-next-match">
+              <div class="widget-title">
+                <h3>Next Match</h3>
+              </div>
+              <div class="widget-body mb-3">
+                <div class="widget-vs">
+                  <div class="d-flex align-items-center justify-content-around justify-content-between w-100">
+                    <div class="team-1 text-center" style="width: 200px">
+                      <img id="home_logo1" src="" alt="Image" class="img-fluid">
+                      <h3 id="home_stats1" next_match = "{{ next_match }}"></h3>
+                    </div>
+                    <div class="align-items-center">
+                      <span class="vs"><span>VS</span></span>
+                    </div>
+                    <div class="team-2 text-center" style="width: 200px">
+                      <img id="away_logo1" src="" alt="Image" class="img-fluid">
+                      <h3 id="away_stats1"></h3>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="text-center widget-vs-contents mb-4">
+                <h4 id="game_label"></h4>
+                <p class="mb-5">
+                  <span class="d-block" id = "data_next_match"></span>
+                  <span class="d-block" id = "time_next_match"></span>
+                  <strong class="text-primary" id = "location"></strong>
+                </p>
+
+                <div id="date-countdown2" class="pb-1"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-12 title-section">
+            <h2 class="heading">Upcoming Matches</h2>
+          </div>
+          <div class="col-lg-6 mb-4">
+            <div class="bg-light p-4 rounded">
+              <div class="widget-body">
+                  <div class="widget-vs">
+                    <div class="d-flex align-items-center justify-content-around justify-content-between w-100">
+                      <div class="team-1 text-center" style="width: 200px">
+                        <img id="home_logo2" src="" alt="Image" class="img-fluid">
+                        <h3 id="home_stats2" upcoming_matches_H = "{{ upcoming_matches_H }}"></h3>
+                      </div>
+                      <div>
+                        <span class="vs"><span>VS</span></span>
+                      </div>
+                      <div class="team-2 text-center" style="width: 200px">
+                        <img id="away_logo2" src="" alt="Image" class="img-fluid">
+                        <h3 id="away_stats2"></h3>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="text-center widget-vs-contents mb-4">
+                  <h4 id="game_label1"></h4>
+                  <p class="mb-5">
+                    <span class="d-block" id="data_upcoming_match_H_1"></span>
+                    <span class="d-block" id="time_upcoming_match_H_1"></span>
+                    <strong class="text-primary" id="location_upcoming_match_H_1"></strong>
+                  </p>
+
+                </div>
+              
+            </div>
+          </div>
+          <div class="col-lg-6 mb-4">
+            <div class="bg-light p-4 rounded">
+              <div class="widget-body">
+                  <div class="widget-vs">
+                    <div class="d-flex align-items-center justify-content-around justify-content-between w-100">
+                      <div class="team-1 text-center" style="width: 200px">
+                        <img id="home_logo4" src="" alt="Image" class="img-fluid">
+                        <h3 id="home_stats4" upcoming_matches_A = "{{ upcoming_matches_A }}"></h3>
+                      </div>
+                      <div>
+                        <span class="vs"><span>VS</span></span>
+                      </div>
+                      <div class="team-2 text-center" style="width: 200px">
+                        <img id="away_logo4" src="" alt="Image" class="img-fluid">
+                        <h3 id="away_stats4"></h3>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="text-center widget-vs-contents mb-4">
+                  <h4 id="game_label3"></h4>
+                  <p class="mb-5">
+                    <span class="d-block" id = "data_upcoming_match_A_1"></span>
+                    <span class="d-block" id = "time_upcoming_match_A_1"></span>
+                    <strong class="text-primary" id="location_upcoming_match_A_1"></strong>
+                  </p>
+
+                </div>
+              
+            </div>
+          </div>
+
+          <div class="col-lg-6 mb-4">
+            <div class="bg-light p-4 rounded">
+              <div class="widget-body">
+                  <div class="widget-vs">
+                    <div class="d-flex align-items-center justify-content-around justify-content-between w-100">
+                      <div class="team-1 text-center" style="width: 200px">
+                        <img id="home_logo3" src="" alt="Image" class="img-fluid">
+                        <h3 id="home_stats3"></h3>
+                      </div>
+                      <div>
+                        <span class="vs"><span>VS</span></span>
+                      </div>
+                      <div class="team-2 text-center" style="width: 200px">
+                        <img id="away_logo3" src="" alt="Image" class="img-fluid">
+                        <h3 id="away_stats3"></h3>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="text-center widget-vs-contents mb-4">
+                  <h4 id ="game_label2"></h4>
+                  <p class="mb-5">
+                    <span class="d-block" id="data_upcoming_match_H_2"></span>
+                    <span class="d-block" id="time_upcoming_match_H_2"></span>
+                    <strong class="text-primary" id="location_upcoming_match_H_2"></strong>
+                  </p>
+
+                </div>
+              
+            </div>
+          </div>
+          <div class="col-lg-6 mb-4">
+            <div class="bg-light p-4 rounded">
+              <div class="widget-body">
+                  <div class="widget-vs">
+                    <div class="d-flex align-items-center justify-content-around justify-content-between w-100">
+                      <div class="team-1 text-center">
+                        <img id="home_logo5" src="" alt="Image" class="img-fluid">
+                        <h3 id="home_stats5"></h3>
+                      </div>
+                      <div>
+                        <span class="vs"><span>VS</span></span>
+                      </div>
+                      <div class="team-2 text-center">
+                        <img id="away_logo5" src="" alt="Image" class="img-fluid">
+                        <h3 id="away_stats5"></h3>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="text-center widget-vs-contents mb-4">
+                  <h4 id="game_label4"></h4>
+                  <p class="mb-5">
+                    <span class="d-block" id="data_upcoming_match_A_2"></span>
+                    <span class="d-block" id="time_upcoming_match_A_2"></span>
+                    <strong class="text-primary" id="location_upcoming_match_A_2"></strong>
+                  </p>
+
+                </div>
+              
+            </div>
+          </div>
+          
+        </div>
+      </div>
+    </div> <!-- .site-section -->
+
+    <div class="site-section">
+      <div class="container">
+        <div class="row">
+          <div class="col-6 title-section">
+            <h2 class="heading">RANK PLAYERS</h2>
+          </div>
+          <div class="col-6 text-right">
+            <div class="custom-nav">
+            <a href="#" class="js-custom-prev-v2"><span class="icon-keyboard_arrow_left"></span></a>
+            <span></span>
+            <a href="#" class="js-custom-next-v2"><span class="icon-keyboard_arrow_right"></span></a>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="owl-4-slider owl-carousel">
+          <div class="item">
+            <div class="video-media">
+              <img id="player_logo_1" src="" alt="Image" class="img-fluid">
+              <a href="" class="d-flex play-button align-items-center" data-fancybox>
+                <span class="icon mr-3">
+                  <span class="icon-play"></span>
+                </span>
+                <div class="caption">
+                  <span class="meta" id="player_pos_1"></span>
+                  <h3 class="m-0" id="player_name_1" rank_players = "{{ rank_players }}"></h3>
+                </div>
+              </a>
+            </div>
+          </div>
+          <div class="item">
+            <div class="video-media">
+              <img id="player_logo_2" src="" alt="Image" class="img-fluid">
+              <a href="" class="d-flex play-button align-items-center" data-fancybox>
+                <span class="icon mr-3">
+                  <span class="icon-play"></span>
+                </span>
+                <div class="caption">
+                  <span class="meta" id="player_pos_2"></span>
+                  <h3 class="m-0" id="player_name_2"></h3>
+                </div>
+              </a>
+            </div>
+          </div>
+          <div class="item">
+            <div class="video-media">
+              <img id="player_logo_3" src="" alt="Image" class="img-fluid">
+              <a href="" class="d-flex play-button align-items-center" data-fancybox>
+                <span class="icon mr-3">
+                  <span class="icon-play"></span>
+                </span>
+                <div class="caption">
+                  <span class="meta" id="player_pos_3"></span>
+                  <h3 class="m-0" id="player_name_3"></h3>
+                </div>
+              </a>
+            </div>
+          </div>
+          <div class="item">
+            <div class="video-media">
+              <img id="player_logo_4" src="" alt="Image" class="img-fluid">
+              <a href="" class="d-flex play-button align-items-center" data-fancybox>
+                <span class="icon mr-3">
+                  <span class="icon-play"></span>
+                </span>
+                <div class="caption">
+                  <span class="meta" id="player_pos_4"></span>
+                  <h3 class="m-0" id="player_name_4"></h3>
+                </div>
+              </a>
+            </div>
+          </div>
+          <div class="item">
+            <div class="video-media">
+              <img id="player_logo_5" src="" alt="Image" class="img-fluid">
+              <a href="" class="d-flex play-button align-items-center" data-fancybox>
+                <span class="icon mr-3">
+                  <span class="icon-play"></span>
+                </span>
+                <div class="caption">
+                  <span class="meta" id="player_pos_5"></span>
+                  <h3 class="m-0" id="player_name_5"></h3>
+                </div>
+              </a>
+            </div>
+          </div>
+          <div class="item">
+            <div class="video-media">
+              <img id="player_logo_6" src="" alt="Image" class="img-fluid">
+              <a href="" class="d-flex play-button align-items-center" data-fancybox>
+                <span class="icon mr-3">
+                  <span class="icon-play"></span>
+                </span>
+                <div class="caption">
+                  <span class="meta" id="player_pos_6"></span>
+                  <h3 class="m-0" id="player_name_6"></h3>
+                </div>
+              </a>
+            </div>
+          </div>
+          <div class="item">
+            <div class="video-media">
+              <img id="player_logo_7" src="" alt="Image" class="img-fluid">
+              <a href="" class="d-flex play-button align-items-center" data-fancybox>
+                <span class="icon mr-3">
+                  <span class="icon-play"></span>
+                </span>
+                <div class="caption">
+                  <span class="meta" id="player_pos_7"></span>
+                  <h3 class="m-0" id="player_name_7"></h3>
+                </div>
+              </a>
+            </div>
+          </div>
+          <div class="item">
+            <div class="video-media">
+              <img id="player_logo_8" src="" alt="Image" class="img-fluid">
+              <a href="" class="d-flex play-button align-items-center" data-fancybox>
+                <span class="icon mr-3">
+                  <span class="icon-play"></span>
+                </span>
+                <div class="caption">
+                  <span class="meta" id="player_pos_8"></span>
+                  <h3 class="m-0" id="player_name_8"></h3>
+                </div>
+              </a>
+            </div>
+          </div>
+          <div class="item">
+            <div class="video-media">
+              <img id="player_logo_9" src="" alt="Image" class="img-fluid">
+              <a href="" class="d-flex play-button align-items-center" data-fancybox>
+                <span class="icon mr-3">
+                  <span class="icon-play"></span>
+                </span>
+                <div class="caption">
+                  <span class="meta" id="player_pos_9"></span>
+                  <h3 class="m-0" id="player_name_9"></h3>
+                </div>
+              </a>
+            </div>
+          </div>
+          <div class="item">
+            <div class="video-media">
+              <img id="player_logo_10" src="" alt="Image" class="img-fluid">
+              <a href="" class="d-flex play-button align-items-center" data-fancybox>
+                <span class="icon mr-3">
+                  <span class="icon-play"></span>
+                </span>
+                <div class="caption">
+                  <span class="meta" id="player_pos_10"></span>
+                  <h3 class="m-0" id="player_name_10"></h3>
+                </div>
+              </a>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <div class="container site-section">
+      <div class="row">
+        <div class="col-6 title-section">
+          <h2 class="heading">Our Blog</h2>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-6">
+          <div class="custom-media d-flex">
+            <div class="img mr-4">
+              <img src="images/img_1.jpg" alt="Image" class="img-fluid">
+            </div>
+            <div class="text">
+              <span class="meta">May 20, 2020</span>
+              <h3 class="mb-4"><a href="#">Romolu to stay at Real Nadrid?</a></h3>
+              <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Possimus deserunt saepe tempora dolorem.</p>
+              <p><a href="#">Read more</a></p>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="custom-media d-flex">
+            <div class="img mr-4">
+              <img src="images/img_3.jpg" alt="Image" class="img-fluid">
+            </div>
+            <div class="text">
+              <span class="meta">May 20, 2020</span>
+              <h3 class="mb-4"><a href="#">Romolu to stay at Real Nadrid?</a></h3>
+              <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Possimus deserunt saepe tempora dolorem.</p>
+              <p><a href="#">Read more</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+    <footer class="footer-section">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-3">
+            <div class="widget mb-3">
+              <h3>News</h3>
+              <ul class="list-unstyled links">
+                <li><a href="#">All</a></li>
+                <li><a href="#">Club News</a></li>
+                <li><a href="#">Media Center</a></li>
+                <li><a href="#">Video</a></li>
+                <li><a href="#">RSS</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-lg-3">
+            <div class="widget mb-3">
+              <h3>Tickets</h3>
+              <ul class="list-unstyled links">
+                <li><a href="#">Online Ticket</a></li>
+                <li><a href="#">Payment and Prices</a></li>
+                <li><a href="#">Contact &amp; Booking</a></li>
+                <li><a href="#">Tickets</a></li>
+                <li><a href="#">Coupon</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-lg-3">
+            <div class="widget mb-3">
+              <h3>Matches</h3>
+              <ul class="list-unstyled links">
+                <li><a href="#">Standings</a></li>
+                <li><a href="#">World Cup</a></li>
+                <li><a href="#">La Lega</a></li>
+                <li><a href="#">Hyper Cup</a></li>
+                <li><a href="#">World League</a></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="col-lg-3">
+            <div class="widget mb-3">
+              <h3>Social</h3>
+              <ul class="list-unstyled links">
+                <li><a href="#">Twitter</a></li>
+                <li><a href="#">Facebook</a></li>
+                <li><a href="#">Instagram</a></li>
+                <li><a href="#">Youtube</a></li>
+              </ul>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="row text-center">
+          <div class="col-md-12">
+            <div class=" pt-5">
+              <p>
+                <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                Copyright &copy;
+                <script>
+                  document.write(new Date().getFullYear());
+                </script> All rights reserved | This template is made with <i class="icon-heart"
+                  aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
+                <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+              </p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </footer>
+
+
+
+  </div>
+  <!-- .site-wrap -->
+  <script type="text/javascript" src="{{url_for('static', filename='basket/js/jquery-3.3.1.min.js')}}"></script>
+  <script type="text/javascript" src="{{url_for('static', filename='basket/js/jquery-migrate-3.0.1.min.js')}}"></script>
+  <script type="text/javascript" src="{{url_for('static', filename='basket/js/jquery-ui.js')}}"></script>
+  <script type="text/javascript" src="{{url_for('static', filename='basket/js/popper.min.js')}}"></script>
+  <script type="text/javascript" src="{{url_for('static', filename='basket/js/bootstrap.min.js')}}"></script>
+  <script type="text/javascript" src="{{url_for('static', filename='basket/js/owl.carousel.min.js')}}"></script>
+  <script type="text/javascript" src="{{url_for('static', filename='basket/js/jquery.stellar.min.js')}}"></script>
+  <script type="text/javascript" src="{{url_for('static', filename='basket/js/jquery.countdown.min.js')}}"></script>
+  <script type="text/javascript" src="{{url_for('static', filename='basket/js/bootstrap-datepicker.min.js')}}"></script>
+  <script type="text/javascript" src="{{url_for('static', filename='basket/js/jquery.easing.1.3.js')}}"></script>
+  <script type="text/javascript" src="{{url_for('static', filename='basket/js/aos.js')}}"></script>
+  <script type="text/javascript" src="{{url_for('static', filename='basket/js/jquery.fancybox.min.js')}}"></script>
+  <script type="text/javascript" src="{{url_for('static', filename='basket/js/jquery.sticky.js')}}"></script>
+  <script type="text/javascript" src="{{url_for('static', filename='basket/js/jquery.mb.YTPlayer.min.js')}}"></script>
+  <script type="text/javascript" src="{{url_for('static', filename='basket/js/main.js')}}"></script>
+  <script>
+    function formatDate(date){
+      // Definisci la data
+      var data = new Date(date); // Mese è zero-based (11 = Dicembre)
+
+      // Ottieni la rappresentazione della data nel formato desiderato
+      var dataFormattata = data.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
+      // Aggiungi il suffisso 'th', 'st', 'nd' o 'rd' al giorno
+      var giorno = data.getDate();
+      var suffissoGiorno;
+      if (giorno >= 11 && giorno <= 13) {
+          suffissoGiorno = 'th';
+      } else {
+          switch (giorno % 10) {
+              case 1: suffissoGiorno = 'st'; break;
+              case 2: suffissoGiorno = 'nd'; break;
+              case 3: suffissoGiorno = 'rd'; break;
+              default: suffissoGiorno = 'th'; break;
+          }
+      }
+
+      temp = dataFormattata.split(",")
+      // Concatena il suffisso al giorno
+      dataFormattata = temp[0] + suffissoGiorno +","+temp[1]
+
+      return dataFormattata
+    }
+
+    function formatTime(timeString) {
+      // Dividi l'orario nelle componenti ore, minuti e secondi
+      var [hours, minutes, seconds] = timeString.split(':');
+
+      // Converti le ore in un numero
+      hours = parseInt(hours, 10);
+
+      // Costruisci il suffisso AM/PM
+      var suffix = hours >= 12 ? 'PM' : 'AM';
+
+      // Modifica le ore per il formato a 12 ore
+      if (hours > 12) {
+          hours -= 12;
+      } else if (hours === 0) {
+          hours = 0;
+      }
+
+      // Costruisci la stringa del fuso orario
+      var timezoneString = 'UTC';
+
+      // Costruisci la stringa del tempo formattato
+      var formattedTime = hours + ':' + minutes + ' ' + suffix + ' ' + timezoneString;
+      return formattedTime;
+    }
+
+    window.onload = function() {
+      const home_params = document.getElementById('home_stats').getAttribute('home_stats');
+      var home_stats = JSON.parse(home_params)[0]
+      const away_params = document.getElementById('away_stats').getAttribute('away_stats');
+      var away_stats = JSON.parse(away_params)[0]
+
+      const home_win_pct_params = document.getElementById('home_win_pct').getAttribute('home_win_pct');
+      var home_win_pct = JSON.parse(home_win_pct_params)
+      document.getElementById('home_win_pct').textContent = home_win_pct+"%";
+
+      const away_win_pct_params = document.getElementById('away_win_pct').getAttribute('away_win_pct');
+      var away_win_pct = JSON.parse(away_win_pct_params)
+      document.getElementById('away_win_pct').textContent = away_win_pct+"%";
+      
+      // Next match (se esiste)
+      const next_match_params = document.getElementById('home_stats1').getAttribute('next_match');
+      var next_match = JSON.parse(next_match_params)[0]
+      console.log(next_match)
+      if (next_match == undefined){
+        document.getElementById("next_match_box").style.display = "none";
+      }else{
+        document.getElementById('home_stats1').textContent = next_match['home_team_name'];
+        document.getElementById('away_stats1').textContent = next_match['away_team_name'];
+        // Imposto la data e l'ora next match formattata
+        document.getElementById('data_next_match').textContent = formatDate(next_match['start_time'].split(' ')[0]);
+        document.getElementById('time_next_match').textContent = formatTime(next_match['start_time'].split(' ')[1]);
+        //imposto luogo
+        document.getElementById('location').textContent = next_match['arena_name'] + " - " + next_match['arena_city'];
+        //imposto game_label
+        if( next_match['game_label'] === "")
+            document.getElementById('game_label').textContent = "Season";
+        else
+            document.getElementById('game_label').textContent = next_match['game_label'];
+
+        document.getElementById("home_logo1").src = "static/basket/images/Logos/"+next_match['home_team_id']+".svg";
+        document.getElementById("away_logo1").src = "static/basket/images/Logos/"+next_match['away_team_id']+".svg";
+      }
+
+      const upcoming_match_params_H = document.getElementById('home_stats2').getAttribute('upcoming_matches_H');
+      var upcoming_match_H = JSON.parse(upcoming_match_params_H)
+
+      const upcoming_match_params_A = document.getElementById('home_stats4').getAttribute('upcoming_matches_A');
+      var upcoming_match_A = JSON.parse(upcoming_match_params_A)
+
+      const rank_players_params = document.getElementById('player_name_1').getAttribute('rank_players');
+      var rank_players_l = JSON.parse(rank_players_params)
+
+      // Imposto i nomi delle squadre
+      document.getElementById('home_stats').textContent = home_stats['TEAM_NAME'];
+      document.getElementById('away_stats').textContent = away_stats['TEAM_NAME'];
+
+      // Imposto i loghi
+      document.getElementById("home_logo").src = "static/basket/images/Logos/"+home_stats['TEAM_ID']+".svg";
+      document.getElementById("away_logo").src = "static/basket/images/Logos/"+away_stats['TEAM_ID']+".svg";
+
+      //imposto partite upcoming match H
+
+      //prima partita
+      //nomi squadre
+      document.getElementById('home_stats2').textContent = upcoming_match_H[0]['home_team_name'];
+      document.getElementById('away_stats2').textContent = upcoming_match_H[0]['away_team_name'];
+
+      //loghi
+      document.getElementById("home_logo2").src = "static/basket/images/Logos/"+upcoming_match_H[0]['home_team_id']+".svg";
+      document.getElementById("away_logo2").src = "static/basket/images/Logos/"+upcoming_match_H[0]['away_team_id']+".svg";
+
+      //imposto season o pre season ecc
+      if(upcoming_match_H[0]['game_label'] === "")
+          document.getElementById('game_label1').textContent = "Season";
+      else
+          document.getElementById('game_label1').textContent = upcoming_match_H[0]['game_label'];
+
+      //imposto data e ora 
+      document.getElementById('data_upcoming_match_H_1').textContent = formatDate(upcoming_match_H[0]['start_time'].split(' ')[0]);
+      document.getElementById('time_upcoming_match_H_1').textContent = formatTime(upcoming_match_H[0]['start_time'].split(' ')[1]);
+
+      //imposto luogo
+      document.getElementById('location_upcoming_match_H_1').textContent = upcoming_match_H[0]['arena_name'] + " - " + upcoming_match_H[0]['arena_city'];
+
+      //seconda partita
+      //nomi squadre
+      document.getElementById('home_stats3').textContent = upcoming_match_H[1]['home_team_name'];
+      document.getElementById('away_stats3').textContent = upcoming_match_H[1]['away_team_name'];
+
+      //loghi
+      document.getElementById("home_logo3").src = "static/basket/images/Logos/"+upcoming_match_H[1]['home_team_id']+".svg";
+      document.getElementById("away_logo3").src = "static/basket/images/Logos/"+upcoming_match_H[1]['away_team_id']+".svg";
+
+      //imposto season o pre season ecc
+      if(upcoming_match_H[1]['game_label'] === "")
+          document.getElementById('game_label2').textContent = "Season";
+      else
+          document.getElementById('game_label2').textContent = upcoming_match_H[1]['game_label'];
+
+      //imposto data e ora 
+      document.getElementById('data_upcoming_match_H_2').textContent = formatDate(upcoming_match_H[1]['start_time'].split(' ')[0]);
+      document.getElementById('time_upcoming_match_H_2').textContent = formatTime(upcoming_match_H[1]['start_time'].split(' ')[1]);
+
+      //imposto luogo
+      document.getElementById('location_upcoming_match_H_2').textContent = upcoming_match_H[1]['arena_name'] + " - " + upcoming_match_H[1]['arena_city'];
+
+    //imposto partite upcoming match A
+
+      //prima partita
+      //nomi squadre
+      document.getElementById('home_stats4').textContent = upcoming_match_A[0]['home_team_name'];
+      document.getElementById('away_stats4').textContent = upcoming_match_A[0]['away_team_name'];
+
+      //loghi
+      document.getElementById("home_logo4").src = "static/basket/images/Logos/"+upcoming_match_A[0]['home_team_id']+".svg";
+      document.getElementById("away_logo4").src = "static/basket/images/Logos/"+upcoming_match_A[0]['away_team_id']+".svg";
+
+      //imposto season o pre season ecc
+      if(upcoming_match_A[0]['game_label'] === "")
+          document.getElementById('game_label3').textContent = "Season";
+      else
+          document.getElementById('game_label3').textContent = upcoming_match_A[0]['game_label'];
+
+      //imposto data e ora 
+      document.getElementById('data_upcoming_match_A_1').textContent = formatDate(upcoming_match_A[0]['start_time'].split(' ')[0]);
+      document.getElementById('time_upcoming_match_A_1').textContent = formatTime(upcoming_match_A[0]['start_time'].split(' ')[1]);
+
+      //imposto luogo
+      document.getElementById('location_upcoming_match_A_1').textContent = upcoming_match_A[0]['arena_name'] + " - " + upcoming_match_A[0]['arena_city'];
+
+      //seconda partita
+      //nomi squadre
+      document.getElementById('home_stats5').textContent = upcoming_match_A[1]['home_team_name'];
+      document.getElementById('away_stats5').textContent = upcoming_match_A[1]['away_team_name'];
+
+      //loghi
+      document.getElementById("home_logo5").src = "static/basket/images/Logos/"+upcoming_match_A[1]['home_team_id']+".svg";
+      document.getElementById("away_logo5").src = "static/basket/images/Logos/"+upcoming_match_A[1]['away_team_id']+".svg";
+
+      //imposto season o pre season ecc
+      if(upcoming_match_A[1]['game_label'] === "")
+          document.getElementById('game_label4').textContent = "Season";
+      else
+          document.getElementById('game_label4').textContent = upcoming_match_A[1]['game_label'];
+
+      //imposto data e ora 
+      document.getElementById('data_upcoming_match_A_2').textContent = formatDate(upcoming_match_A[1]['start_time'].split(' ')[0]);
+      document.getElementById('time_upcoming_match_A_2').textContent = formatTime(upcoming_match_A[1]['start_time'].split(' ')[1]);
+
+      //imposto luogo
+      document.getElementById('location_upcoming_match_A_2').textContent = upcoming_match_A[1]['arena_name'] + " - " + upcoming_match_A[1]['arena_city'];
+      //rank players
+      for (i = 1; i <= 10; i++){
+        //imposto logo team player
+        document.getElementById("player_logo_"+i).src = "static/basket/images/Logos/"+rank_players_l[i-1]['TEAM_ID']+".svg";
+
+        //imposto pos #10 / PTS
+        document.getElementById("player_pos_"+i).textContent = "#"+rank_players_l[i-1]['RANK']+" / " + rank_players_l[i-1]['PTS'];
+
+        //imposto nome
+        document.getElementById("player_name_"+i).textContent = rank_players_l[i-1]['PLAYER'];
+      }
+      // referee
+      const referee = document.getElementById('ref').getAttribute('first_official');
+      document.getElementById("ref").innerHTML = "<U>First official: " + referee + "</U>"
+    };
+  </script>
+
+</body>
+
+</html>
