@@ -10,23 +10,18 @@ from nba_api.stats.endpoints import leaguegamelog
 from nba_api.stats.endpoints import teamdetails
 from nba_api.stats.endpoints import leaguestandings, leagueleaders
 import requests
-
-
-
-from nba_api.stats.library.parameters import (
-    LeagueID,
-    Season,
-    SeasonType,
-    SeasonNullable,
-)
-from nba_api.stats.endpoints import playercareerstats
-import pdb
-from nba_api.stats.library.http import NBAStatsHTTP
-from nba_api.stats.library.parameters import PerMode36, LeagueIDNullable
+import pyodbc
 
 app = Flask(__name__)
-BASEDIR = os.path.abspath(os.path.dirname(__name__))
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+os.path.join(BASEDIR,'NBAPredict')
+# BASEDIR = os.path.abspath(os.path.dirname(__name__))
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+os.path.join(BASEDIR,'NBAPredict')
+username = 'NBA-Predict'
+password = 'SRSProject2024'
+server = 'nbapredictdb.database.windows.net'
+database = 'NBA-PredictDB'
+driver = 'ODBC Driver 18 for SQL Server'
+app.config['SQLALCHEMY_DATABASE_URI'] = f'mssql+pyodbc://{username}:{password}@{server}:1433/{database}?driver={driver}'
+# app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql://NBA-Predict:SRSProject2024@nbapredictdb.database.windows.net/NBA-PredictDB?driver={driver}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -74,7 +69,7 @@ class Player(db.Model):
 
     id = db.Column(db.Integer, primary_key = True)
     rank = db.Column(db.Integer)
-    name = db.Column(db.String(20))
+    name = db.Column(db.String(30))
     team_id = db.Column(db.Integer)
     team_name = db.Column(db.String(50))
     pts = db.Column(db.Integer)
@@ -277,18 +272,7 @@ def test():
     # game_logs = leaguegamelog.LeagueGameLog(season = '2023-24')
     # Nikola Jokić
     # career = playercareerstats.PlayerCareerStats(player_id='203999') 
-    response = requests.get(
-        url="https://stats.nba.com/players",
-        params={
-            "LeagueID": LeagueID.default,
-            "Season": Season.default,
-            "SeasonType": SeasonType.default,
-            "SeasonYear": SeasonNullable.default,
-        },
-        headers=None,
-        proxies=None,
-        timeout=30,
-    )
+    response = requests.get(url="https://stats.nba.com/players")
     print(response.status_code)
     return render_template('test.html')
 
@@ -423,10 +407,10 @@ def game_details():
 
 if __name__ == '__main__':
     with app.app_context():
-        # db.drop_all()
+        db.drop_all()
 
-        # Connessione al database
-        conn = sqlite3.connect('NBAPredict')
+        '''# Connessione al database
+        conn = pyodbc.connect('DRIVER='+driver+';SERVER=tcp:'+server+';PORT=1433;DATABASE='+database+';UID='+username+';PWD='+ password)
         cursor = conn.cursor()
 
         # Esegui una query per ottenere l'elenco delle tabelle
@@ -440,44 +424,6 @@ if __name__ == '__main__':
         numero_tabelle = len(tabelle)
 
         # Verifica se il numero di tabelle è zero
-        if numero_tabelle == 0:
-            populate_database()
-    '''response = requests.get(url="https://stats.nba.com/stats/playercareerstats",
-                            params={
-                                "PlayerID": '203999',
-                                "PerMode": PerMode36.default,
-                                "LeagueID": LeagueIDNullable.default,
-                            },
-                            headers={
-                                #"Host": "stats.nba.com",
-                                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:72.0) Gecko/20100101 Firefox/72.0",
-                                "Referer": "https://stats.nba.com/"
-                            },
-                            timeout=30)
-
-    response = requests.get(
-            url="https://stats.nba.com/stats/playercareerstats",
-            params={
-                "PlayerID": '203999',
-                "PerMode": PerMode36.default,
-                "LeagueID": LeagueIDNullable.default,
-            },
-            proxies=None,
-            headers={
-                "Host": "stats.nba.com",
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:72.0) Gecko/20100101 Firefox/72.0",
-                "Accept": "application/json, text/plain, */*",
-                "Accept-Language": "en-US,en;q=0.5",
-                "Accept-Encoding": "gzip, deflate, br",
-                "x-nba-stats-origin": "stats",
-                "x-nba-stats-token": "true",
-                "Connection": "keep-alive",
-                "Referer": "https://stats.nba.com/",
-                "Pragma": "no-cache",
-                "Cache-Control": "no-cache",
-            },
-            timeout=30,
-        )
-
-    career = playercareerstats.PlayerCareerStats(player_id='203999') '''
+        if numero_tabelle == 0:'''
+        populate_database()
     app.run(debug=True)
