@@ -2,9 +2,7 @@ from flask import Flask, render_template, request
 from functions import get_schedule, get_first_official_by_game_id, get_strength_by_abv, get_future_schedule_2, get_rank_players, get_standings, get_rank_players_blog
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timedelta
-import sqlite3
 import pandas as pd
-import os
 from tqdm import tqdm
 from nba_api.stats.endpoints import leaguegamelog
 from nba_api.stats.endpoints import teamdetails
@@ -21,7 +19,6 @@ server = 'nbapredictdb.database.windows.net'
 database = 'NBA-PredictDB'
 driver = 'ODBC Driver 18 for SQL Server'
 app.config['SQLALCHEMY_DATABASE_URI'] = f'mssql+pyodbc://{username}:{password}@{server}:1433/{database}?driver={driver}'
-# app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql://NBA-Predict:SRSProject2024@nbapredictdb.database.windows.net/NBA-PredictDB?driver={driver}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -115,7 +112,7 @@ class Team(db.Model):
         self.ppg = ppg
 
 def return_next_match(home_team_id, away_team_id, next_matches):
-    conn = sqlite3.connect('NBAPredict')
+    conn = pyodbc.connect('DRIVER='+driver+';SERVER=tcp:'+server+';PORT=1433;DATABASE='+database+';UID='+username+';PWD='+ password)
     cursor = conn.cursor()
     query_ = f'''
         SELECT game_id, home_team_id, home_team_name, away_team_id, away_team_name, start_time
@@ -152,7 +149,7 @@ def return_next_match(home_team_id, away_team_id, next_matches):
     return df.to_json(orient="records")
 
 def return_upcoming_match(team_id, next_matches):
-    conn = sqlite3.connect('NBAPredict')
+    conn = pyodbc.connect('DRIVER='+driver+';SERVER=tcp:'+server+';PORT=1433;DATABASE='+database+';UID='+username+';PWD='+ password)
     cursor = conn.cursor()
     query_ = f'''
         SELECT game_id, home_team_id, home_team_name, away_team_id, away_team_name, start_time
@@ -278,34 +275,37 @@ def test():
 
 @app.route("/")
 def homepage():
-    conn = sqlite3.connect('NBAPredict')
+    conn = pyodbc.connect('DRIVER='+driver+';SERVER=tcp:'+server+';PORT=1433;DATABASE='+database+';UID='+username+';PWD='+ password)
     cursor = conn.cursor()
 
     # Esecuzione di una query SQL
-    cursor.execute("SELECT game_id, home_team_id, home_team_name, away_team_id, away_team_name, start_time, home_pts, away_pts FROM GAMES")
-    # Ottenere i risultati della query
-    rows = cursor.fetchall()
-
+    df = pd.read_sql("SELECT game_id, home_team_id, home_team_name, away_team_id, away_team_name, start_time, home_pts, away_pts FROM GAMES", conn)
+    df.columns = ['game_id', 'home_team_id', 'home_team_name', 'away_team_id', 'away_team_name', 'start_time', 'home_pts', 'away_pts']
+    
     # Classifiche
-    cursor.execute("SELECT position, name, wins, losses, win_pct, ppg FROM TEAMS WHERE conference = 'East' ORDER BY position")
-    eastStandings = pd.DataFrame(cursor.fetchall(), columns=['Position', 'TeamName', 'Wins', 'Losses', 'WinPCT', 'PointsPG']).to_json(orient="records")
+    eastStandings = pd.read_sql("SELECT position, name, wins, losses, win_pct, ppg FROM TEAMS WHERE conference = 'East' ORDER BY position", conn)
+    eastStandings.columns=['Position', 'TeamName', 'Wins', 'Losses', 'WinPCT', 'PointsPG']
+    eastStandings = eastStandings.to_json(orient="records")
 
-    cursor.execute("SELECT position, name, wins, losses, win_pct, ppg FROM TEAMS WHERE conference = 'West' ORDER BY position")
-    westStandings = pd.DataFrame(cursor.fetchall(), columns=['Position', 'TeamName', 'Wins', 'Losses', 'WinPCT', 'PointsPG']).to_json(orient="records")
+    westStandings = pd.read_sql("SELECT position, name, wins, losses, win_pct, ppg FROM TEAMS WHERE conference = 'West' ORDER BY position", conn)
+    westStandings.columns=['Position', 'TeamName', 'Wins', 'Losses', 'WinPCT', 'PointsPG']
+    westStandings = westStandings.to_json(orient="records")
 
     # Top players
-    cursor.execute("SELECT id, rank, name, team_id, team_name, pts FROM PLAYERS ORDER BY rank LIMIT 10")
-    rank_players = pd.DataFrame(cursor.fetchall(), columns=["PLAYER_ID", "RANK", "PLAYER", "TEAM_ID", "TEAM", "PTS"]).to_json(orient="records")
+    rank_players = pd.read_sql("SELECT id, rank, name, team_id, team_name, pts FROM PLAYERS ORDER BY rank", conn)[:10]
+    rank_players.columns=["PLAYER_ID", "RANK", "PLAYER", "TEAM_ID", "TEAM", "PTS"]
+    rank_players = rank_players.to_json(orient="records")
 
     # Player blog
-    cursor.execute("SELECT id, rank, name, team_id, team_name, pts, min, fgm, fg_pct FROM PLAYERS ORDER BY rank LIMIT 2")
-    rank_players_blog = pd.DataFrame(cursor.fetchall(), columns=["PLAYER_ID", "RANK", "PLAYER", "TEAM_ID", "TEAM", "PTS", "MIN", "FGM", "FG_PCT"]).to_json(orient="records")
-
+    rank_players_blog = pd.read_sql("SELECT id, rank, name, team_id, team_name, pts, min, fgm, fg_pct FROM PLAYERS ORDER BY rank", conn)[:2]
+    rank_players_blog.columns=["PLAYER_ID", "RANK", "PLAYER", "TEAM_ID", "TEAM", "PTS", "MIN", "FGM", "FG_PCT"]
+    rank_players_blog = rank_players_blog.to_json(orient="records")
     # Chiudere il cursore e la connessione al database
     cursor.close()
     conn.close()
 
-    df = pd.DataFrame(rows, columns = ['game_id', 'home_team_id', 'home_team_name', 'away_team_id', 'away_team_name', 'start_time', 'home_pts', 'away_pts'])
+    print(df['start_time'])
+    print(df['start_time'].to_json(orient="records"))    
 
     return render_template('index.html', partite = df.to_json(orient="records"),
                            eastStandings = eastStandings,
@@ -318,16 +318,16 @@ def game_details():
     game_id = request.args.get('game_id', '')
     first_official = get_first_official_by_game_id(game_id)
 
-    conn = sqlite3.connect('NBAPredict')
+    conn = pyodbc.connect('DRIVER='+driver+';SERVER=tcp:'+server+';PORT=1433;DATABASE='+database+';UID='+username+';PWD='+ password)
     cursor = conn.cursor()
 
     # Top players
-    cursor.execute("SELECT id, rank, name, team_id, team_name, pts FROM PLAYERS ORDER BY rank LIMIT 10")
-    rank_players = pd.DataFrame(cursor.fetchall(), columns=["PLAYER_ID", "RANK", "PLAYER", "TEAM_ID", "TEAM", "PTS"]).to_json(orient="records")
+    cursor.execute("SELECT id, rank, name, team_id, team_name, pts FROM PLAYERS ORDER BY rank")
+    rank_players = pd.DataFrame(cursor.fetchall(), columns=["PLAYER_ID", "RANK", "PLAYER", "TEAM_ID", "TEAM", "PTS"])[:10].to_json(orient="records")
 
     # Player blog
-    cursor.execute("SELECT id, rank, name, team_id, team_name, pts, min, fgm, fg_pct FROM PLAYERS ORDER BY rank LIMIT 2")
-    rank_players_blog = pd.DataFrame(cursor.fetchall(), columns=["PLAYER_ID", "RANK", "PLAYER", "TEAM_ID", "TEAM", "PTS", "MIN", "FGM", "FG_PCT"]).to_json(orient="records")
+    cursor.execute("SELECT id, rank, name, team_id, team_name, pts, min, fgm, fg_pct FROM PLAYERS ORDER BY rank")
+    rank_players_blog = pd.DataFrame(cursor.fetchall(), columns=["PLAYER_ID", "RANK", "PLAYER", "TEAM_ID", "TEAM", "PTS", "MIN", "FGM", "FG_PCT"])[:2].to_json(orient="records")
 
     # Chiudere il cursore e la connessione al database
     cursor.close()
@@ -373,7 +373,7 @@ def game_details():
                             rank_players_blog = rank_players_blog)
 
     # Predno le forze
-    conn = sqlite3.connect('NBAPredict')
+    conn = pyodbc.connect('DRIVER='+driver+';SERVER=tcp:'+server+';PORT=1433;DATABASE='+database+';UID='+username+';PWD='+ password)
     cursor = conn.cursor()
     # Esecuzione di una query SQL
     cursor.execute(f"SELECT strength FROM TEAMS WHERE id = {home_tid}")
@@ -406,24 +406,4 @@ def game_details():
                             rank_players_blog = rank_players_blog)
 
 if __name__ == '__main__':
-    with app.app_context():
-        db.drop_all()
-
-        '''# Connessione al database
-        conn = pyodbc.connect('DRIVER='+driver+';SERVER=tcp:'+server+';PORT=1433;DATABASE='+database+';UID='+username+';PWD='+ password)
-        cursor = conn.cursor()
-
-        # Esegui una query per ottenere l'elenco delle tabelle
-        cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
-        tabelle = cursor.fetchall()
-
-        # Chiudi la connessione
-        conn.close()
-
-        # Conta il numero di tabelle
-        numero_tabelle = len(tabelle)
-
-        # Verifica se il numero di tabelle è zero
-        if numero_tabelle == 0:'''
-        populate_database()
     app.run(debug=True)
