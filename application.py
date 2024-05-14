@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request
-from functions import get_schedule, get_first_official_by_game_id, get_strength_by_abv, get_future_schedule_2, get_rank_players, get_standings
+from functions import get_schedule, get_first_official_by_game_id, get_strength_by_abv, get_future_schedule_2, get_rank_players, get_standings, get_rank_players_blog
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timedelta
 import sqlite3
@@ -8,7 +8,7 @@ import os
 from tqdm import tqdm
 from nba_api.stats.endpoints import leaguegamelog
 from nba_api.stats.endpoints import teamdetails
-from nba_api.stats.endpoints import leaguestandings
+from nba_api.stats.endpoints import leaguestandings, leagueleaders
 import requests
 
 
@@ -68,6 +68,30 @@ class Games(db.Model):
         self.start_time = start_time
         self.away_pts = away_pts
         self.home_pts = home_pts
+
+class Player(db.Model):
+    __tablename__ = 'PLAYERS'
+
+    id = db.Column(db.Integer, primary_key = True)
+    rank = db.Column(db.Integer)
+    name = db.Column(db.String(20))
+    team_id = db.Column(db.Integer)
+    team_name = db.Column(db.String(50))
+    pts = db.Column(db.Integer)
+    min = db.Column(db.Integer)
+    fgm = db.Column(db.Integer)
+    fg_pct = db.Column(db.Float)
+
+    def __init__(self, id, rank, name, team_id, team_name, pts, min, fgm, fg_pct):
+        self.id = id
+        self.rank = rank
+        self.name = name
+        self.team_id = team_id
+        self.team_name = team_name
+        self.pts = pts
+        self.min = min
+        self.fgm = fgm
+        self.fg_pct = fg_pct
 
 class Team(db.Model):
     __tablename__ = 'TEAMS'
@@ -186,7 +210,7 @@ def populate_database():
     game_logs = leaguegamelog.LeagueGameLog(season = '2023-24')
     games_results = game_logs.get_data_frames()[0]
 
-    # Popolo tabella delle partite giocate
+    # ------- GAMES --------
     for index, row in games.iterrows():
         date = row['datetime'].split('-')
         custom_datetime = datetime(int(date[0]), int(date[1]), int(date[2]), int(date[3]), int(date[4]))  # Anno, mese, giorno, ora, minuto
@@ -212,7 +236,7 @@ def populate_database():
     # Esegui il commit delle modifiche
     db.session.commit()
 
-    # Popolo tabella delle squadre
+    # ------- TEAMS --------
     id_list = games_results['TEAM_ID'].unique().tolist()
     for id in tqdm(id_list):
         # Ottieni le informazioni dettagliate sulla squadra utilizzando l'endpoint 'teamdetails'
@@ -228,10 +252,25 @@ def populate_database():
                  losses = int(nba_league_standings['LOSSES'].iloc[0]),
                  win_pct = int(nba_league_standings['WinPCT'].iloc[0] * 100),
                  ppg = int(nba_league_standings['PointsPG'].iloc[0]),
-                 strength = 0)
+                 strength = 1)
                  #strength = get_strength_by_abv(str(team_info['ABBREVIATION'].iloc[0]), stats_weights, 30))
         db.session.add(t)
     db.session.commit()
+
+    # ------- PLAYERS --------
+    leaders = leagueleaders.LeagueLeaders().get_data_frames()[0][["PLAYER_ID", "RANK", "PLAYER", "TEAM_ID", "TEAM", "PTS", "MIN", "FGM", "FG_PCT"]]
+    for index, row in leaders.iterrows():
+        p = Player(id = row['PLAYER_ID'],
+                   rank = row['RANK'],
+                   name = row['PLAYER'],
+                   team_id = row['TEAM_ID'],
+                   team_name = row['TEAM'],
+                   pts = row['PTS'],
+                   min = row['MIN'],
+                   fgm = row['FGM'],
+                   fg_pct = row['FG_PCT'])
+        db.session.add(p)
+        db.session.commit()
 
 @app.route("/test")
 def test():
@@ -263,11 +302,20 @@ def homepage():
     # Ottenere i risultati della query
     rows = cursor.fetchall()
 
+    # Classifiche
     cursor.execute("SELECT position, name, wins, losses, win_pct, ppg FROM TEAMS WHERE conference = 'East' ORDER BY position")
     eastStandings = pd.DataFrame(cursor.fetchall(), columns=['Position', 'TeamName', 'Wins', 'Losses', 'WinPCT', 'PointsPG']).to_json(orient="records")
 
     cursor.execute("SELECT position, name, wins, losses, win_pct, ppg FROM TEAMS WHERE conference = 'West' ORDER BY position")
     westStandings = pd.DataFrame(cursor.fetchall(), columns=['Position', 'TeamName', 'Wins', 'Losses', 'WinPCT', 'PointsPG']).to_json(orient="records")
+
+    # Top players
+    cursor.execute("SELECT id, rank, name, team_id, team_name, pts FROM PLAYERS ORDER BY rank LIMIT 10")
+    rank_players = pd.DataFrame(cursor.fetchall(), columns=["PLAYER_ID", "RANK", "PLAYER", "TEAM_ID", "TEAM", "PTS"]).to_json(orient="records")
+
+    # Player blog
+    cursor.execute("SELECT id, rank, name, team_id, team_name, pts, min, fgm, fg_pct FROM PLAYERS ORDER BY rank LIMIT 2")
+    rank_players_blog = pd.DataFrame(cursor.fetchall(), columns=["PLAYER_ID", "RANK", "PLAYER", "TEAM_ID", "TEAM", "PTS", "MIN", "FGM", "FG_PCT"]).to_json(orient="records")
 
     # Chiudere il cursore e la connessione al database
     cursor.close()
@@ -277,13 +325,30 @@ def homepage():
 
     return render_template('index.html', partite = df.to_json(orient="records"),
                            eastStandings = eastStandings,
-                           westStandings = westStandings)
-                           #rank_players = get_rank_players())
+                           westStandings = westStandings,
+                           rank_players = rank_players,
+                           rank_players_blog = rank_players_blog)
 
 @app.route("/game_details")
 def game_details():
     game_id = request.args.get('game_id', '')
     first_official = get_first_official_by_game_id(game_id)
+
+    conn = sqlite3.connect('NBAPredict')
+    cursor = conn.cursor()
+
+    # Top players
+    cursor.execute("SELECT id, rank, name, team_id, team_name, pts FROM PLAYERS ORDER BY rank LIMIT 10")
+    rank_players = pd.DataFrame(cursor.fetchall(), columns=["PLAYER_ID", "RANK", "PLAYER", "TEAM_ID", "TEAM", "PTS"]).to_json(orient="records")
+
+    # Player blog
+    cursor.execute("SELECT id, rank, name, team_id, team_name, pts, min, fgm, fg_pct FROM PLAYERS ORDER BY rank LIMIT 2")
+    rank_players_blog = pd.DataFrame(cursor.fetchall(), columns=["PLAYER_ID", "RANK", "PLAYER", "TEAM_ID", "TEAM", "PTS", "MIN", "FGM", "FG_PCT"]).to_json(orient="records")
+
+    # Chiudere il cursore e la connessione al database
+    cursor.close()
+    conn.close()
+
     game_logs = leaguegamelog.LeagueGameLog(season = '2023-24')
     games = game_logs.get_data_frames()[0]
     home_stats = games[(games['GAME_ID'] == game_id) & (games['MATCHUP'].str.contains('vs.'))]
@@ -320,7 +385,8 @@ def game_details():
                             next_match = next,
                             upcoming_matches_H = upcoming_matches_H,
                             upcoming_matches_A = upcoming_matches_A,
-                            rank_players = get_rank_players())
+                            rank_players = rank_players,
+                            rank_players_blog = rank_players_blog)
 
     # Predno le forze
     conn = sqlite3.connect('NBAPredict')
@@ -350,9 +416,10 @@ def game_details():
                             next_match = next,
                             upcoming_matches_H = upcoming_matches_H,
                             upcoming_matches_A = upcoming_matches_A,
-                            rank_players = get_rank_players(),
+                            rank_players = rank_players,
                             home_win_pct = home_win_pct,
-                            away_win_pct = away_win_pct)
+                            away_win_pct = away_win_pct,
+                            rank_players_blog = rank_players_blog)
 
 if __name__ == '__main__':
     with app.app_context():

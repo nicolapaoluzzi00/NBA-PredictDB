@@ -79,7 +79,7 @@ def get_schedule():
 
 def get_rank_players():
     # Ottieni la classifica dei migliori giocatori
-    leaders = leagueleaders.LeagueLeaders(timeout=100)
+    leaders = leagueleaders.LeagueLeaders()
 
     return leaders.get_data_frames()[0][["PLAYER_ID", "RANK", "PLAYER", "TEAM_ID", "TEAM", "PTS"]][:10].to_json(orient="records")
 
@@ -202,10 +202,15 @@ def get_strength_by_abv(abv, weight, n_partite):
     return recent_team_strength_with_weights(game_log_data[['PTS','FG_PCT', 'FT_PCT', 'OREB','DREB','AST','FG3_PCT','STL','BLK','FP']], weight) * game_log_data['W_PCT'][0]
 
 def get_standings(conference):
-    nba_league_standings = leaguestandings.LeagueStandings(timeout=100).get_data_frames()[0]
+    nba_league_standings = leaguestandings.LeagueStandings().get_data_frames()[0]
     standings = nba_league_standings[nba_league_standings['Conference'] == conference]
     df = pd.DataFrame(columns=['Position', 'TeamName', 'Wins', 'Losses', 'WinPCT', 'PointsPG'])
     for index, row in standings.iterrows():
         df.loc[df.shape[0]] = [df.shape[0] + 1, row['TeamCity'] + " " + row['TeamName'], + row['WINS'], + row['LOSSES'], int(row['WinPCT'] * 100), int(row['PointsPG'])]
     return df
-# fgbh
+
+def get_rank_players_blog():
+    # Ottieni la classifica dei migliori giocatori
+    leaders = leagueleaders.LeagueLeaders()
+
+    return leaders.get_data_frames()[0][["PLAYER_ID", "RANK", "PLAYER", "TEAM_ID", "TEAM", "PTS", "MIN", "FGM", "FG_PCT"]][:2].to_json(orient="records")

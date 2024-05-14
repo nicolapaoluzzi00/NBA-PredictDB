@@ -47,9 +47,9 @@
 
       <div class="container">
         <div class="d-flex align-items-center">
-          <div class="site-logo">
-            <a href="/">
-              <img src="images/logo.png" alt="Logo">
+          <div class="site-logo" style="width: 15%; height: 15%">
+            <a href="index.html">
+              <img src="../static/logo/logo.png" alt="Logo" style="width: 100%; height: 100%">
             </a>
           </div>
           <div class="ml-auto">
@@ -515,33 +515,33 @@
     <div class="container site-section">
       <div class="row">
         <div class="col-6 title-section">
-          <h2 class="heading">Our Blog</h2>
+          <h2 class="heading" id = "rank_players_blog" rank_players_blog = "{{ rank_players_blog }}">Our Blog</h2>
         </div>
       </div>
       <div class="row">
         <div class="col-lg-6">
           <div class="custom-media d-flex">
             <div class="img mr-4">
-              <img src="images/img_1.jpg" alt="Image" class="img-fluid">
+              <img src="images/img_1.jpg" alt="Image" class="img-fluid" id="img_blog_1">
             </div>
             <div class="text">
-              <span class="meta">May 20, 2020</span>
-              <h3 class="mb-4"><a href="#">Romolu to stay at Real Nadrid?</a></h3>
-              <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Possimus deserunt saepe tempora dolorem.</p>
-              <p><a href="#">Read more</a></p>
+              <span class="meta" id="date_blog_1"></span>
+              <h3 class="mb-4" id="player_blog_1"><a href="#"></a></h3>
+              <p id = "p_player_blog_1"></p>
+              <p><a href="https://www.nba.com/stats/players/traditional?PerMode=Totals">Read more</a></p>
             </div>
           </div>
         </div>
         <div class="col-lg-6">
           <div class="custom-media d-flex">
             <div class="img mr-4">
-              <img src="images/img_3.jpg" alt="Image" class="img-fluid">
+              <img src="" alt="Image" class="img-fluid" id="img_blog_2">
             </div>
             <div class="text">
-              <span class="meta">May 20, 2020</span>
-              <h3 class="mb-4"><a href="#">Romolu to stay at Real Nadrid?</a></h3>
-              <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Possimus deserunt saepe tempora dolorem.</p>
-              <p><a href="#">Read more</a></p>
+              <span class="meta" id="date_blog_2"></span>
+              <h3 class="mb-4" id="player_blog_2"><a href="#" ></a></h3>
+              <p id = "p_player_blog_2"></p>
+              <p><a href="https://www.nba.com/stats/players/traditional?PerMode=Totals">Read more</a></p>
             </div>
           </div>
         </div>
@@ -906,6 +906,28 @@
 
         //imposto nome
         document.getElementById("player_name_"+i).textContent = rank_players_l[i-1]['PLAYER'];
+      }
+
+      //rank players our blog
+      const rank_players_blog_params = document.getElementById('rank_players_blog').getAttribute('rank_players_blog');
+      var rank_players_blog_l = JSON.parse(rank_players_blog_params)
+
+      console.log(rank_players_blog_l)
+
+      for (i = 1; i <= 2; i++)
+      {
+        //imposto logo team player
+        document.getElementById("img_blog_"+i).src = "static/basket/images/Logos/"+rank_players_blog_l[i-1]['TEAM_ID']+".svg";
+
+        //imposto date
+        document.getElementById("date_blog_"+i).textContent = new Date().toLocaleDateString();
+
+        //imposto nome
+        document.getElementById("player_blog_"+i).textContent = rank_players_blog_l[i-1]['PLAYER'];
+
+        //imposto p
+        document.getElementById("p_player_blog_"+i).innerHTML = "Points: "+rank_players_blog_l[i-1]['PTS']+"<br>"+"Minutes Played: "+rank_players_blog_l[i-1]['MIN']+"<br>"+"Field Goals Made: "+rank_players_blog_l[i-1]['FGM']+"<br>"+"Field Goals Percentage: "+(rank_players_blog_l[i-1]['FG_PCT']*100).toFixed(1)+"%";
+
       }
     };
   </script>
