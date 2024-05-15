@@ -108,10 +108,89 @@ class Team(db.Model):
         self.win_pct = win_pct
         self.ppg = ppg
 
+class GameLog(db.Model):
+    __tablename__ = 'GAMESLOG'
+
+    id = db.Column(db.Integer, primary_key = True)
+    team_id = db.Column(db.Integer)
+    game_id = db.Column(db.String(10))
+    team_name = db.Column(db.String(50))
+    fgm = db.Column(db.Integer)
+    fga = db.Column(db.Integer)
+    fg_pct = db.Column(db.Float)
+    fg3m = db.Column(db.Integer)
+    fg3a = db.Column(db.Integer)
+    fg3_pct = db.Column(db.Float)
+    ftm = db.Column(db.Integer)
+    fta = db.Column(db.Integer)
+    ft_pct = db.Column(db.Float)
+    oreb = db.Column(db.Integer)
+    dreb = db.Column(db.Integer)
+    ast = db.Column(db.Integer)
+    stl = db.Column(db.Integer)
+    blk = db.Column(db.Integer)
+    tov = db.Column(db.Integer)
+    pf = db.Column(db.Integer)
+    pts = db.Column(db.Integer)
+    matchup = db.Column(db.String(15))
+
+    def __init__(self, id, team_id, game_id, team_name, fgm, fga, fg_pct, fg3m, fg3a, fg3_pct, ftm, fta, ft_pct, oreb, dreb, ast, stl, blk, tov, pf, pts, matchup):
+        self.id = id
+        self.team_id = team_id
+        self.game_id = game_id
+        self.team_name = team_name
+        self.fgm = fgm
+        self.fga = fga
+        self.fg_pct = fg_pct
+        self.fg3m = fg3m
+        self.fg3a = fg3a
+        self.fg3_pct = fg3_pct
+        self.ftm = ftm
+        self.fta = fta
+        self.ft_pct = ft_pct
+        self.oreb = oreb
+        self.dreb = dreb
+        self.ast = ast
+        self.stl = stl
+        self.blk = blk
+        self.tov = tov
+        self.pf = pf
+        self.pts = pts
+        self.matchup = matchup
+
 # Funzione per popolare il database con dati predefiniti
 def populate_database():
     # Crea tutte le tabelle nel database
     db.create_all()
+
+    # -------- GAMESLOG --------
+    print('GAMES LOG')
+    game_logs = leaguegamelog.LeagueGameLog(season = '2023-24').get_data_frames()[0]
+    for index, row in tqdm(game_logs.iterrows()):
+        gl = GameLog(id = index,
+                     team_id = row['TEAM_ID'],
+                     team_name = row['TEAM_NAME'],
+                     game_id = row['GAME_ID'],
+                     fgm = row['FGM'],
+                     fga = row['FGA'],
+                     fg_pct = row['FG_PCT'],
+                     fg3m = row['FG3M'],
+                     fg3a = row['FG3A'],
+                     fg3_pct = row['FG3_PCT'],
+                     ftm = row['FTM'],
+                     fta = row['FTA'],
+                     ft_pct = row['FT_PCT'],
+                     oreb = row['OREB'],
+                     dreb = row['OREB'],
+                     ast = row['AST'],
+                     stl = row['STL'],
+                     blk = row['BLK'],
+                     tov = row['TOV'],
+                     pf = row['PF'],
+                     pts = row['PTS'],
+                     matchup = row['MATCHUP'])
+        db.session.add(gl)
+        db.session.commit()
 
     # Popola il database con dati predefiniti
     games = get_schedule()
@@ -153,6 +232,7 @@ def populate_database():
 
     # ------- TEAMS --------
     id_list = games_results['TEAM_ID'].unique().tolist()
+    print('GAMES LOG')
     for id in tqdm(id_list):
         # Ottieni le informazioni dettagliate sulla squadra utilizzando l'endpoint 'teamdetails'
         team_info = teamdetails.TeamDetails(team_id=id).get_data_frames()[0]
@@ -174,7 +254,8 @@ def populate_database():
 
     # ------- PLAYERS --------
     leaders = leagueleaders.LeagueLeaders().get_data_frames()[0][["PLAYER_ID", "RANK", "PLAYER", "TEAM_ID", "TEAM", "PTS", "MIN", "FGM", "FG_PCT"]]
-    for index, row in leaders.iterrows():
+    print('PLAYERS')
+    for index, row in tqdm(leaders.iterrows()):
         p = Player(id = row['PLAYER_ID'],
                    rank = row['RANK'],
                    name = row['PLAYER'],
