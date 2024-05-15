@@ -146,6 +146,8 @@ def return_next_match(home_team_id, away_team_id, next_matches):
 
     df = pd.DataFrame(columns = ['game_id', 'home_team_id', 'home_team_name', 'away_team_id', 'away_team_name', 'start_time', 'game_label', 'arena_name', 'arena_city'])
 
+    df['start_time'] = df['start_time'].apply(lambda x: x.strftime('%Y-%m-%d %H:%M:%S'))
+    
     return df.to_json(orient="records")
 
 def return_upcoming_match(team_id, next_matches):
@@ -179,6 +181,8 @@ def return_upcoming_match(team_id, next_matches):
 
     df = pd.DataFrame(upcoming_m, columns = ['game_id', 'home_team_id', 'home_team_name', 'away_team_id', 'away_team_name', 'start_time', 'game_label', 'arena_name', 'arena_city'])
 
+    df['start_time'] = df['start_time'].apply(lambda x: x.strftime('%Y-%m-%d %H:%M:%S'))
+    
     # Chiudere il cursore e la connessione al database
     cursor.close()
     conn.close()
@@ -303,9 +307,11 @@ def homepage():
     # Chiudere il cursore e la connessione al database
     cursor.close()
     conn.close()
-
+    df['start_time'] = df['start_time'].apply(lambda x: x.strftime('%Y-%m-%d %H:%M:%S'))
+    print()
     print(df['start_time'])
-    print(df['start_time'].to_json(orient="records"))    
+    print(df['start_time'].to_json(orient="records"))
+    
 
     return render_template('index.html', partite = df.to_json(orient="records"),
                            eastStandings = eastStandings,
@@ -319,24 +325,26 @@ def game_details():
     first_official = get_first_official_by_game_id(game_id)
 
     conn = pyodbc.connect('DRIVER='+driver+';SERVER=tcp:'+server+';PORT=1433;DATABASE='+database+';UID='+username+';PWD='+ password)
-    cursor = conn.cursor()
+    
 
-    # Top players
-    cursor.execute("SELECT id, rank, name, team_id, team_name, pts FROM PLAYERS ORDER BY rank")
-    rank_players = pd.DataFrame(cursor.fetchall(), columns=["PLAYER_ID", "RANK", "PLAYER", "TEAM_ID", "TEAM", "PTS"])[:10].to_json(orient="records")
+     # Top players
+    rank_players = pd.read_sql("SELECT id, rank, name, team_id, team_name, pts FROM PLAYERS ORDER BY rank", conn)[:10]
+    rank_players.columns=["PLAYER_ID", "RANK", "PLAYER", "TEAM_ID", "TEAM", "PTS"]
+    rank_players = rank_players.to_json(orient="records")
 
     # Player blog
-    cursor.execute("SELECT id, rank, name, team_id, team_name, pts, min, fgm, fg_pct FROM PLAYERS ORDER BY rank")
-    rank_players_blog = pd.DataFrame(cursor.fetchall(), columns=["PLAYER_ID", "RANK", "PLAYER", "TEAM_ID", "TEAM", "PTS", "MIN", "FGM", "FG_PCT"])[:2].to_json(orient="records")
-
-    # Chiudere il cursore e la connessione al database
-    cursor.close()
+    rank_players_blog = pd.read_sql("SELECT id, rank, name, team_id, team_name, pts, min, fgm, fg_pct FROM PLAYERS ORDER BY rank", conn)[:2]
+    rank_players_blog.columns=["PLAYER_ID", "RANK", "PLAYER", "TEAM_ID", "TEAM", "PTS", "MIN", "FGM", "FG_PCT"]
+    rank_players_blog = rank_players_blog.to_json(orient="records")
+    
+    # Chiudere la connessione al database
     conn.close()
 
     game_logs = leaguegamelog.LeagueGameLog(season = '2023-24')
     games = game_logs.get_data_frames()[0]
     home_stats = games[(games['GAME_ID'] == game_id) & (games['MATCHUP'].str.contains('vs.'))]
     game_date = home_stats['GAME_DATE'].iloc[0]
+    print(game_date)
     home_stats = home_stats[['TEAM_ID','TEAM_NAME', 'FGM', 'FGA', 'FG_PCT', 'FG3M',
                             'FG3A', 'FG3_PCT', 'FTM', 'FTA', 'FT_PCT', 'OREB', 'DREB', 'AST',
                             'STL', 'BLK', 'TOV', 'PF', 'PTS']]

@@ -27,7 +27,8 @@ $(document).ready(function(){
 function read_events(json_games){
     for (const game in json_games) {
         //console.log(json_games[game]['start_time']);
-        var date = json_games[game]['start_time'].split(' ')[0]
+        var date = json_games[game]['start_time']
+
         new_event_json(json_games[game]['game_id'], json_games[game]['home_team_name'], json_games[game]['away_team_name'],
                         parseInt(date.split('-')[0]), parseInt(date.split('-')[1]), parseInt(date.split('-')[2]),
                         json_games[game]['home_pts'], json_games[game]['away_pts'])
