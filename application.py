@@ -337,11 +337,12 @@ def game_details():
     rank_players_blog.columns=["PLAYER_ID", "RANK", "PLAYER", "TEAM_ID", "TEAM", "PTS", "MIN", "FGM", "FG_PCT"]
     rank_players_blog = rank_players_blog.to_json(orient="records")
     
+    games = pd.read_sql("SELECT * FROM GAMESLOG", conn)
+    games.columns = ['ID', 'TEAM_ID', 'GAME_ID', 'TEAM_NAME', 'FGM', 'FGA', 'FG_PCT', 'FG3M', 'FG3A', 'FG3_PCT', 'FTM', 'FTA', 'FT_PCT', 'OREB', 'DREB', 'AST', 'STL', 'BLK', 'TOV', 'PF', 'PTS', 'MATCHUP']
+    
     # Chiudere la connessione al database
     conn.close()
 
-    game_logs = leaguegamelog.LeagueGameLog(season = '2023-24')
-    games = game_logs.get_data_frames()[0]
     home_stats = games[(games['GAME_ID'] == game_id) & (games['MATCHUP'].str.contains('vs.'))]
     game_date = home_stats['GAME_DATE'].iloc[0]
     print(game_date)
