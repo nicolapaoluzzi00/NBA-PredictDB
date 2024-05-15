@@ -134,7 +134,7 @@ class GameLog(db.Model):
     pf = db.Column(db.Integer)
     pts = db.Column(db.Integer)
     matchup = db.Column(db.String(15))
-    game_date = db.Column(db.Datetime)
+    game_date = db.Column(db.DateTime)
 
     def __init__(self, id, team_id, game_id, team_name, fgm, fga, fg_pct, fg3m, fg3a, fg3_pct, ftm, fta, ft_pct, oreb, dreb, ast, stl, blk, tov, pf, pts, matchup, game_date):
         self.id = id
