@@ -133,7 +133,7 @@ def return_next_match(home_team_id, away_team_id, next_matches):
     if len(rows) > 0:
         # prendo solo la prima riga perchè mi interessa solo il prossimo match
         next_m = list(rows[0])
-        print(next_m)
+        # print(next_m)
         game_label = next_matches[next_matches["game_id"] == rows[0][0]]["game_label"].iloc[0]
         arena_name = next_matches[next_matches["game_id"] == rows[0][0]]["arena_name"].iloc[0]
         arena_city = next_matches[next_matches["game_id"] == rows[0][0]]["arena_city"].iloc[0]
@@ -308,10 +308,6 @@ def homepage():
     cursor.close()
     conn.close()
     df['start_time'] = df['start_time'].apply(lambda x: x.strftime('%Y-%m-%d %H:%M:%S'))
-    print()
-    print(df['start_time'])
-    print(df['start_time'].to_json(orient="records"))
-    
 
     return render_template('index.html', partite = df.to_json(orient="records"),
                            eastStandings = eastStandings,
@@ -344,8 +340,8 @@ def game_details():
     conn.close()
 
     home_stats = games[(games['GAME_ID'] == game_id) & (games['MATCHUP'].str.contains('vs.'))]
-    game_date = home_stats['GAME_DATE'].iloc[0]
-    print(game_date)
+    game_date = home_stats['GAME_DATE'].iloc[0].strftime('%Y-%m-%d')
+    # df['start_time'] = df['start_time'].apply(lambda x: x.strftime('%Y-%m-%d %H:%M:%S'))
     home_stats = home_stats[['TEAM_ID','TEAM_NAME', 'FGM', 'FGA', 'FG_PCT', 'FG3M',
                             'FG3A', 'FG3_PCT', 'FTM', 'FTA', 'FT_PCT', 'OREB', 'DREB', 'AST',
                             'STL', 'BLK', 'TOV', 'PF', 'PTS']]
@@ -368,6 +364,7 @@ def game_details():
     # Upcoming match away
     upcoming_matches_A = return_upcoming_match(away_tid, next_matches)
     next = return_next_match(home_tid, away_tid, next_matches)
+    print(game_date)
     date = game_date.split('-')
     custom_datetime = datetime(int(date[0]), int(date[1]), int(date[2]))
     if custom_datetime < datetime(2024, 3, 1):
