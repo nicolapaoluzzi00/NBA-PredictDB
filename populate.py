@@ -134,8 +134,9 @@ class GameLog(db.Model):
     pf = db.Column(db.Integer)
     pts = db.Column(db.Integer)
     matchup = db.Column(db.String(15))
+    game_date = db.Column(db.Datetime)
 
-    def __init__(self, id, team_id, game_id, team_name, fgm, fga, fg_pct, fg3m, fg3a, fg3_pct, ftm, fta, ft_pct, oreb, dreb, ast, stl, blk, tov, pf, pts, matchup):
+    def __init__(self, id, team_id, game_id, team_name, fgm, fga, fg_pct, fg3m, fg3a, fg3_pct, ftm, fta, ft_pct, oreb, dreb, ast, stl, blk, tov, pf, pts, matchup, game_date):
         self.id = id
         self.team_id = team_id
         self.game_id = game_id
@@ -158,6 +159,7 @@ class GameLog(db.Model):
         self.pf = pf
         self.pts = pts
         self.matchup = matchup
+        self.game_date = game_date
 
 # Funzione per popolare il database con dati predefiniti
 def populate_database():
@@ -196,7 +198,8 @@ def populate_database():
                      tov = row['TOV'],
                      pf = row['PF'],
                      pts = row['PTS'],
-                     matchup = row['MATCHUP'])
+                     matchup = row['MATCHUP'],
+                     game_date=row['GAME_DATE'])
         db.session.add(gl)
         db.session.commit()
 
