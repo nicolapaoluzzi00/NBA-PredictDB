@@ -7,6 +7,7 @@ from nba_api.stats.endpoints import leaguegamelog
 from nba_api.stats.endpoints import teamdetails
 from nba_api.stats.endpoints import leaguestandings, leagueleaders
 import pyodbc
+import math
 
 app = Flask(__name__)
 
@@ -166,8 +167,14 @@ def populate_database():
     # -------- GAMESLOG --------
     print('GAMES LOG')
     game_logs = leaguegamelog.LeagueGameLog(season = '2023-24').get_data_frames()[0]
-    game_logs[game_logs['GAME_ID'] == '0022301148']['FT_PCT'].iloc[1] = 0
+    # game_logs[game_logs['GAME_ID'] == '0022301148']['FT_PCT'].iloc[1] = 0
     for index, row in tqdm(game_logs.iterrows()):
+        if math.isnan(row['FG_PCT']):
+            row['FG_PCT'] = 0
+        if math.isnan(row['FG3_PCT']):
+            row['FG3_PCT'] = 0
+        if math.isnan(row['FT_PCT']):
+            row['FT_PCT'] = 0
         gl = GameLog(id = index,
                      team_id = row['TEAM_ID'],
                      team_name = row['TEAM_NAME'],
