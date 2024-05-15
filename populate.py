@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from tqdm import tqdm
 from nba_api.stats.endpoints import leaguegamelog
-from nba_api.stats.endpoints import teamdetails
+from nba_api.stats.endpoints import teamdetails, boxscoresummaryv2
 from nba_api.stats.endpoints import leaguestandings, leagueleaders
 import pyodbc
 import math
@@ -135,8 +135,9 @@ class GameLog(db.Model):
     pts = db.Column(db.Integer)
     matchup = db.Column(db.String(15))
     game_date = db.Column(db.DateTime)
+    ref = db.Column(db.String(50))
 
-    def __init__(self, id, team_id, game_id, team_name, fgm, fga, fg_pct, fg3m, fg3a, fg3_pct, ftm, fta, ft_pct, oreb, dreb, ast, stl, blk, tov, pf, pts, matchup, game_date):
+    def __init__(self, id, team_id, game_id, team_name, fgm, fga, fg_pct, fg3m, fg3a, fg3_pct, ftm, fta, ft_pct, oreb, dreb, ast, stl, blk, tov, pf, pts, matchup, game_date, ref):
         self.id = id
         self.team_id = team_id
         self.game_id = game_id
@@ -160,6 +161,7 @@ class GameLog(db.Model):
         self.pts = pts
         self.matchup = matchup
         self.game_date = game_date
+        self.ref = ref
 
 # Funzione per popolare il database con dati predefiniti
 def populate_database():
@@ -177,10 +179,16 @@ def populate_database():
             row['FG3_PCT'] = 0
         if math.isnan(row['FT_PCT']):
             row['FT_PCT'] = 0
+
+        # Find referee
+        game_id = row['GAME_ID']
+        boxscore = boxscoresummaryv2.BoxScoreSummaryV2(game_id=game_id)
+        data = boxscore.get_normalized_dict()['Officials'][0]
+        first_official = data['FIRST_NAME'] + " " + data['LAST_NAME']
         gl = GameLog(id = index,
                      team_id = row['TEAM_ID'],
                      team_name = row['TEAM_NAME'],
-                     game_id = row['GAME_ID'],
+                     game_id = game_id,
                      fgm = row['FGM'],
                      fga = row['FGA'],
                      fg_pct = row['FG_PCT'],
@@ -199,7 +207,8 @@ def populate_database():
                      pf = row['PF'],
                      pts = row['PTS'],
                      matchup = row['MATCHUP'],
-                     game_date=row['GAME_DATE'])
+                     game_date=row['GAME_DATE'],
+                     ref = first_official)
         db.session.add(gl)
         db.session.commit()
 
@@ -243,7 +252,7 @@ def populate_database():
 
     # ------- TEAMS --------
     id_list = games_results['TEAM_ID'].unique().tolist()
-    print('GAMES LOG')
+    print('TEAMS')
     for id in tqdm(id_list):
         # Ottieni le informazioni dettagliate sulla squadra utilizzando l'endpoint 'teamdetails'
         team_info = teamdetails.TeamDetails(team_id=id).get_data_frames()[0]

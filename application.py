@@ -318,7 +318,7 @@ def homepage():
 @app.route("/game_details")
 def game_details():
     game_id = request.args.get('game_id', '')
-    first_official = get_first_official_by_game_id(game_id)
+    # first_official = get_first_official_by_game_id(game_id)
 
     conn = pyodbc.connect('DRIVER='+driver+';SERVER=tcp:'+server+';PORT=1433;DATABASE='+database+';UID='+username+';PWD='+ password)
     
@@ -333,12 +333,13 @@ def game_details():
     rank_players_blog.columns=["PLAYER_ID", "RANK", "PLAYER", "TEAM_ID", "TEAM", "PTS", "MIN", "FGM", "FG_PCT"]
     rank_players_blog = rank_players_blog.to_json(orient="records")
     
-    games = pd.read_sql("SELECT * FROM GAMESLOG", conn)
-    games.columns = ['ID', 'TEAM_ID', 'GAME_ID', 'TEAM_NAME', 'FGM', 'FGA', 'FG_PCT', 'FG3M', 'FG3A', 'FG3_PCT', 'FTM', 'FTA', 'FT_PCT', 'OREB', 'DREB', 'AST', 'STL', 'BLK', 'TOV', 'PF', 'PTS', 'MATCHUP', 'GAME_DATE']
+    games = pd.read_sql(f"SELECT * FROM GAMESLOG WHERE GAME_ID = {game_id}", conn)
+    games.columns = ['ID', 'TEAM_ID', 'GAME_ID', 'TEAM_NAME', 'FGM', 'FGA', 'FG_PCT', 'FG3M', 'FG3A', 'FG3_PCT', 'FTM', 'FTA', 'FT_PCT', 'OREB', 'DREB', 'AST', 'STL', 'BLK', 'TOV', 'PF', 'PTS', 'MATCHUP', 'GAME_DATE', 'REF']
     
     # Chiudere la connessione al database
     conn.close()
 
+    first_official = games['REF'].iloc[0]
     home_stats = games[(games['GAME_ID'] == game_id) & (games['MATCHUP'].str.contains('vs.'))]
     game_date = home_stats['GAME_DATE'].iloc[0].strftime('%Y-%m-%d')
     # df['start_time'] = df['start_time'].apply(lambda x: x.strftime('%Y-%m-%d %H:%M:%S'))
