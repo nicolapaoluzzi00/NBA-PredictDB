@@ -19,6 +19,7 @@
   <link rel="stylesheet" href="{{ url_for('static',filename='basket/fonts/flaticon/font/flaticon.css') }}">
   <link rel="stylesheet" href="{{ url_for('static',filename='basket/css/aos.css') }}">
   <link rel="stylesheet" href="{{ url_for('static',filename='basket/css/style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static',filename='footer/footer.css') }}">
 
   <style type="text/css">
     .stat{
@@ -55,11 +56,11 @@
           <div class="ml-auto">
             <nav class="site-navigation position-relative text-right" role="navigation">
               <ul class="site-menu main-menu js-clone-nav mr-auto d-none d-lg-block">
-                <li><a href="/" class="nav-link">Home</a></li>
-                <li class="active"><a href="matches.html" class="nav-link">Matches</a></li>
-                <li><a href="players.html" class="nav-link">Players</a></li>
-                <li><a href="blog.html" class="nav-link">Blog</a></li>
-                <li><a href="contact.html" class="nav-link">Contact</a></li>
+                <li class="active"><a href="/" class="nav-link">Home</a></li>
+                <li><a href="index.html#standings" class="nav-link">Standings</a></li>
+                <li><a href="#rank" class="nav-link">Players</a></li>
+                <li><a href="#blog" class="nav-link">Blog</a></li>
+                <li><a href="#footer" class="nav-link">Contact</a></li>
               </ul>
             </nav>
 
@@ -365,7 +366,7 @@
         </div>
 
 
-        <div class="owl-4-slider owl-carousel">
+        <div class="owl-4-slider owl-carousel" id="rank">
           <div class="item">
             <div class="video-media">
               <img id="player_logo_1" src="" alt="Image" class="img-fluid">
@@ -512,7 +513,7 @@
       </div>
     </div>
 
-    <div class="container site-section">
+    <div class="container site-section" id="blog">
       <div class="row">
         <div class="col-6 title-section">
           <h2 class="heading" id = "rank_players_blog" rank_players_blog = "{{ rank_players_blog }}">Our Blog</h2>
@@ -550,79 +551,67 @@
 
 
 
-    <footer class="footer-section">
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-3">
-            <div class="widget mb-3">
-              <h3>News</h3>
-              <ul class="list-unstyled links">
-                <li><a href="#">All</a></li>
-                <li><a href="#">Club News</a></li>
-                <li><a href="#">Media Center</a></li>
-                <li><a href="#">Video</a></li>
-                <li><a href="#">RSS</a></li>
-              </ul>
-            </div>
-          </div>
-          <div class="col-lg-3">
-            <div class="widget mb-3">
-              <h3>Tickets</h3>
-              <ul class="list-unstyled links">
-                <li><a href="#">Online Ticket</a></li>
-                <li><a href="#">Payment and Prices</a></li>
-                <li><a href="#">Contact &amp; Booking</a></li>
-                <li><a href="#">Tickets</a></li>
-                <li><a href="#">Coupon</a></li>
-              </ul>
-            </div>
-          </div>
-          <div class="col-lg-3">
-            <div class="widget mb-3">
-              <h3>Matches</h3>
-              <ul class="list-unstyled links">
-                <li><a href="#">Standings</a></li>
-                <li><a href="#">World Cup</a></li>
-                <li><a href="#">La Lega</a></li>
-                <li><a href="#">Hyper Cup</a></li>
-                <li><a href="#">World League</a></li>
-              </ul>
-            </div>
-          </div>
+    <footer class="footer-section footer-distributed" id="footer">
+      <div class="footer-left">
 
-          <div class="col-lg-3">
-            <div class="widget mb-3">
-              <h3>Social</h3>
-              <ul class="list-unstyled links">
-                <li><a href="#">Twitter</a></li>
-                <li><a href="#">Facebook</a></li>
-                <li><a href="#">Instagram</a></li>
-                <li><a href="#">Youtube</a></li>
-              </ul>
-            </div>
-          </div>
+				<h3>NBA <span>Predict</span></h3>
 
-        </div>
+				<p class="footer-links">
+					<a href="#" class="link-1">Home</a>
+					
+					<a href="#standings">Standings</a>
+				
+					<a href="#rank">Players</a>
+				
+					<a href="#blog">Blog</a>
+					
+					<a href="#footer">Contact</a>
+				</p>
+			</div>
 
-        <div class="row text-center">
-          <div class="col-md-12">
-            <div class=" pt-5">
-              <p>
-                <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-                Copyright &copy;
-                <script>
-                  document.write(new Date().getFullYear());
-                </script> All rights reserved | This template is made with <i class="icon-heart"
-                  aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
-                <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-              </p>
-            </div>
-          </div>
+			<div class="footer-center">
 
-        </div>
-      </div>
+				<div>
+					<i class="fa fa-map-marker"></i>
+					<p><span>Viale del Risorgimento, 2</span> Bologna, Italia</p>
+				</div>
+
+				<div>
+					<i class="fa fa-phone"></i>
+					<p>+39 333 222 1110</p>
+				</div>
+
+				<div>
+					<i class="fa fa-envelope"></i>
+					<p>
+            <a href="mailto:manuel.greco4@studio.unibo.it">manuel.greco4@studio.unibo.it</a> <br> 
+            <a href="mailto:michelangelo.florio3@studio.unibo.it">michelangelo.florio3@studio.unibo.it</a> <br>
+            <a href="mailto:nicola.paoluzzi@studio.unibo.it">nicola.paoluzzi@studio.unibo.it</a>
+          </p>
+         
+				</div>
+
+			</div>
+
+			<div class="footer-right">
+
+				<p class="footer-company-about">
+					<span>About the company</span>
+					Welcome to our project, where passion for basketball meets cutting-edge technology!
+				</p>
+
+				<div class="footer-icons">
+
+					<a href=""><i class="fa fa-facebook"></i></a>
+					<a href=""><i class="fa fa-twitter"></i></a>
+					<a href=""><i class="fa fa-linkedin"></i></a>
+					<a href="https://github.com/nicolapaoluzzi00/NBA-PredictDB"><i class="fa fa-github"></i></a>
+
+				</div>
+
+			</div>
+      
     </footer>
-
 
 
   </div>
