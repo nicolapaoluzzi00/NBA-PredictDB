@@ -166,6 +166,7 @@ def populate_database():
     # -------- GAMESLOG --------
     print('GAMES LOG')
     game_logs = leaguegamelog.LeagueGameLog(season = '2023-24').get_data_frames()[0]
+    game_logs[game_logs['GAME_ID'] == '0022301148']['FT_PCT'].iloc[1] = 0
     for index, row in tqdm(game_logs.iterrows()):
         gl = GameLog(id = index,
                      team_id = row['TEAM_ID'],
