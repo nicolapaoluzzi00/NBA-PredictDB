@@ -278,7 +278,7 @@ def test():
     # print(response.status_code)
     # return render_template('test.html')
     import os
-    os.system("streamlit run ./prova.py")
+    os.system("python -m streamlit prova.py --server.port 8000 --server.address 0.0.0.0")
 
 @app.route("/")
 def homepage():
