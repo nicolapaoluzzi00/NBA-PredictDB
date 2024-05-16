@@ -269,12 +269,14 @@ def populate_database():
 
 @app.route("/test")
 def test():
-    # game_logs = leaguegamelog.LeagueGameLog(season = '2023-24')
-    # Nikola Jokić
-    # career = playercareerstats.PlayerCareerStats(player_id='203999') 
-    response = requests.get(url="https://stats.nba.com/players")
-    print(response.status_code)
-    return render_template('test.html')
+    # # game_logs = leaguegamelog.LeagueGameLog(season = '2023-24')
+    # # Nikola Jokić
+    # # career = playercareerstats.PlayerCareerStats(player_id='203999') 
+    # response = requests.get(url="https://stats.nba.com/players")
+    # print(response.status_code)
+    # return render_template('test.html')
+    import os
+    os.system("streamlit run ./prova.py")
 
 @app.route("/")
 def homepage():
