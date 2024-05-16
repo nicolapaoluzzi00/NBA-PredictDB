@@ -128,8 +128,9 @@ def return_next_match(home_team_id, away_team_id, next_matches):
     # Chiudere il cursore e la connessione al database
     cursor.close()
     conn.close()
-
     next_m = []
+    df = pd.DataFrame(columns = ['game_id', 'home_team_id', 'home_team_name', 'away_team_id', 'away_team_name', 'start_time', 'game_label', 'arena_name', 'arena_city'])
+
     if len(rows) > 0:
         # prendo solo la prima riga perchè mi interessa solo il prossimo match
         next_m = list(rows[0])
@@ -144,10 +145,8 @@ def return_next_match(home_team_id, away_team_id, next_matches):
 
         df = pd.DataFrame([next_m], columns = ['game_id', 'home_team_id', 'home_team_name', 'away_team_id', 'away_team_name', 'start_time', 'game_label', 'arena_name', 'arena_city'])
 
-    df = pd.DataFrame(columns = ['game_id', 'home_team_id', 'home_team_name', 'away_team_id', 'away_team_name', 'start_time', 'game_label', 'arena_name', 'arena_city'])
-
     df['start_time'] = df['start_time'].apply(lambda x: x.strftime('%Y-%m-%d %H:%M:%S'))
-    
+    print(df)
     return df.to_json(orient="records")
 
 def return_upcoming_match(team_id, next_matches):
@@ -365,9 +364,9 @@ def game_details():
     # Upcoming match away
     upcoming_matches_A = return_upcoming_match(away_tid, next_matches)
     next = return_next_match(home_tid, away_tid, next_matches)
-    print(game_date)
     date = game_date.split('-')
     custom_datetime = datetime(int(date[0]), int(date[1]), int(date[2]))
+
     if custom_datetime < datetime(2024, 3, 1):
         return render_template('matches.html',
                             first_official=first_official,
