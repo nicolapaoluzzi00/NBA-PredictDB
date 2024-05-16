@@ -1,6 +1,6 @@
 from flask import Flask
 from functions import get_schedule, get_strength_by_abv
-from flask_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy, model
 from datetime import datetime
 from tqdm import tqdm
 from nba_api.stats.endpoints import leaguegamelog
@@ -46,8 +46,11 @@ class Games(db.Model):
     start_time = db.Column(db.DateTime)
     home_pts = db.Column(db.Integer)
     away_pts = db.Column(db.Integer)
+    game_label = db.Column(db.String(15))
+    arena_name = db.Column(db.String(50))
+    arena_city = db.Column(db.String(50))
 
-    def __init__(self, game_id, home_team_id, home_team_tricode, home_team_name, away_team_id, away_team_tricode, away_team_name, start_time, home_pts, away_pts):
+    def __init__(self, game_id, home_team_id, home_team_tricode, home_team_name, away_team_id, away_team_tricode, away_team_name, start_time, home_pts, away_pts, game_label, arena_name, arena_city):
         self.game_id = game_id
         self.home_team_id = home_team_id
         self.home_team_name = home_team_name
@@ -58,6 +61,9 @@ class Games(db.Model):
         self.start_time = start_time
         self.away_pts = away_pts
         self.home_pts = home_pts
+        self.arena_name = arena_name
+        self.arena_city = arena_city
+        self.game_label = game_label
 
 class Player(db.Model):
     __tablename__ = 'PLAYERS'
@@ -163,11 +169,53 @@ class GameLog(db.Model):
         self.game_date = game_date
         self.ref = ref
 
-# Funzione per popolare il database con dati predefiniti
-def populate_database():
-    # Crea tutte le tabelle nel database
-    db.create_all()
+def populate_games():
+    Games.query.delete()
+    db.session.commit()
+    # Popola il database con dati predefiniti
+    games = get_schedule()
 
+    # Sistemo la data d'inizio
+    new_start = games['datetime'].str.replace('Z','')
+    new_start = new_start.str.replace('T','-')
+    new_start = new_start.str.replace(':','-')
+    games['datetime'] = new_start
+
+    game_logs = leaguegamelog.LeagueGameLog(season = '2023-24')
+    games_results = game_logs.get_data_frames()[0]
+
+    # ------- GAMES --------
+    for index, row in games.iterrows():
+        date = row['datetime'].split('-')
+        custom_datetime = datetime(int(date[0]), int(date[1]), int(date[2]), int(date[3]), int(date[4]))  # Anno, mese, giorno, ora, minuto
+        if custom_datetime < datetime(2024,3,1):
+            home_pts = int(games_results[(games_results['GAME_ID'] == row['game_id']) & (games_results['TEAM_ABBREVIATION'] == row['home_team_tricode'])]['PTS'].iloc[0])
+            away_pts = int(games_results[(games_results['GAME_ID'] == row['game_id']) & (games_results['TEAM_ABBREVIATION'] == row['away_team_tricode'])]['PTS'].iloc[0])
+        else:
+            home_pts = None
+            away_pts = None
+        g = Games(game_id = row['game_id'],
+                    home_team_id = row['home_team_id'],
+                    home_team_tricode = row['home_team_tricode'],
+                    home_team_name = row['home_team_city'] + ' ' + row['home_team_name'],
+                    away_team_id = row['away_team_id'],
+                    away_team_tricode = row['away_team_tricode'],
+                    away_team_name =  row['away_team_city'] + ' ' + row['away_team_name'],
+                    start_time = custom_datetime,
+                    home_pts = home_pts,
+                    away_pts = away_pts,
+                    game_label = row['game_label'],
+                    arena_city = row['arena_city'],
+                    arena_name = row['arena_name'])
+
+        db.session.add(g)
+    
+    # Esegui il commit delle modifiche
+    db.session.commit()
+
+def populate_gameslog():
+    GameLog.query.delete()
+    db.session.commit()
     # -------- GAMESLOG --------
     print('GAMES LOG')
     game_logs = leaguegamelog.LeagueGameLog(season = '2023-24').get_data_frames()[0]
@@ -212,45 +260,12 @@ def populate_database():
         db.session.add(gl)
         db.session.commit()
 
-    # Popola il database con dati predefiniti
-    games = get_schedule()
-
-    # Sistemo la data d'inizio
-    new_start = games['datetime'].str.replace('Z','')
-    new_start = new_start.str.replace('T','-')
-    new_start = new_start.str.replace(':','-')
-    games['datetime'] = new_start
-
+def populate_teams():
+    Team.query.delete()
+    db.session.commit()
+# ------- TEAMS --------
     game_logs = leaguegamelog.LeagueGameLog(season = '2023-24')
     games_results = game_logs.get_data_frames()[0]
-
-    # ------- GAMES --------
-    for index, row in games.iterrows():
-        date = row['datetime'].split('-')
-        custom_datetime = datetime(int(date[0]), int(date[1]), int(date[2]), int(date[3]), int(date[4]))  # Anno, mese, giorno, ora, minuto
-        if custom_datetime < datetime(2024,3,1):
-            home_pts = int(games_results[(games_results['GAME_ID'] == row['game_id']) & (games_results['TEAM_ABBREVIATION'] == row['home_team_tricode'])]['PTS'].iloc[0])
-            away_pts = int(games_results[(games_results['GAME_ID'] == row['game_id']) & (games_results['TEAM_ABBREVIATION'] == row['away_team_tricode'])]['PTS'].iloc[0])
-        else:
-            home_pts = None
-            away_pts = None
-        g = Games(game_id = row['game_id'],
-                    home_team_id = row['home_team_id'],
-                    home_team_tricode = row['home_team_tricode'],
-                    home_team_name = row['home_team_city'] + ' ' + row['home_team_name'],
-                    away_team_id = row['away_team_id'],
-                    away_team_tricode = row['away_team_tricode'],
-                    away_team_name =  row['away_team_city'] + ' ' + row['away_team_name'],
-                    start_time = custom_datetime,
-                    home_pts = home_pts,
-                    away_pts = away_pts)
-
-        db.session.add(g)
-    
-    # Esegui il commit delle modifiche
-    db.session.commit()
-
-    # ------- TEAMS --------
     id_list = games_results['TEAM_ID'].unique().tolist()
     print('TEAMS')
     for id in tqdm(id_list):
@@ -272,6 +287,9 @@ def populate_database():
         db.session.add(t)
     db.session.commit()
 
+def populate_players():
+    Player.query.delete()
+    db.session.commit()
     # ------- PLAYERS --------
     leaders = leagueleaders.LeagueLeaders().get_data_frames()[0][["PLAYER_ID", "RANK", "PLAYER", "TEAM_ID", "TEAM", "PTS", "MIN", "FGM", "FG_PCT"]]
     print('PLAYERS')
@@ -291,4 +309,8 @@ def populate_database():
 if __name__ == '__main__':
     with app.app_context():
         db.drop_all()
-        populate_database()
+        db.create_all()
+        # populate_teams()
+        # populate_players()
+        populate_games()        
+        # populate_gameslog()

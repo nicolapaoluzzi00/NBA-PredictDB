@@ -54,7 +54,7 @@ def get_first_official_by_game_id_complete(game_id):
 def get_schedule():
     with open('./data/schedule.json') as f:
         data = json.load(f)
-    calendar = pd.DataFrame(columns=['game_id', 'home_team_id', 'home_team_tricode', 'home_team_city', 'home_team_name', 'away_team_id', 'away_team_tricode','away_team_city', 'away_team_name', 'datetime'])
+    calendar = pd.DataFrame(columns=['game_id', 'home_team_id', 'home_team_tricode', 'home_team_city', 'home_team_name', 'away_team_id', 'away_team_tricode','away_team_city', 'away_team_name', 'datetime', "game_label", "arena_name", "arena_city"])
     count = 0
     for i in range(0, len(data['leagueSchedule']['gameDates'])):
         for j in range(0, len(data['leagueSchedule']['gameDates'][i]['games'])):
@@ -72,7 +72,10 @@ def get_schedule():
                             data_['awayTeam']['teamTricode'],
                             data_['awayTeam']['teamCity'],
                             data_['awayTeam']['teamName'],
-                            data_['gameDateTimeUTC']]
+                            data_['gameDateTimeUTC'],
+                            data_['gameLabel'],
+                            data_['arenaName'],
+                            data_['arenaCity']]
             count = count + 1
     return calendar[:len(calendar)-6]
 
