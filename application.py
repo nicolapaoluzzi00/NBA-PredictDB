@@ -277,8 +277,8 @@ def test():
     # response = requests.get(url="https://stats.nba.com/players")
     # print(response.status_code)
     # return render_template('test.html')
-    import os
-    os.system("python -m streamlit prova.py --server.port 8000 --server.address 0.0.0.0")
+    # import os
+    # os.system("python -m streamlit prova.py --server.port 8000 --server.address 0.0.0.0")
 
 @app.route("/")
 def homepage():
