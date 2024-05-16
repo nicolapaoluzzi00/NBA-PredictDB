@@ -9,6 +9,9 @@ from nba_api.stats.endpoints import teamdetails
 from nba_api.stats.endpoints import leaguestandings, leagueleaders
 import requests
 import pyodbc
+from time import time
+import warnings
+warnings.filterwarnings('ignore')
 
 app = Flask(__name__)
 # BASEDIR = os.path.abspath(os.path.dirname(__name__))
@@ -146,7 +149,6 @@ def return_next_match(home_team_id, away_team_id, next_matches):
         df = pd.DataFrame([next_m], columns = ['game_id', 'home_team_id', 'home_team_name', 'away_team_id', 'away_team_name', 'start_time', 'game_label', 'arena_name', 'arena_city'])
 
     df['start_time'] = df['start_time'].apply(lambda x: x.strftime('%Y-%m-%d %H:%M:%S'))
-    print(df)
     return df.to_json(orient="records")
 
 def return_upcoming_match(team_id, next_matches):
@@ -324,19 +326,30 @@ def game_details():
     conn = pyodbc.connect('DRIVER='+driver+';SERVER=tcp:'+server+';PORT=1433;DATABASE='+database+';UID='+username+';PWD='+ password)
     
 
-     # Top players
+    t0 = time()
+    # Top players
     rank_players = pd.read_sql("SELECT id, rank, name, team_id, team_name, pts FROM PLAYERS ORDER BY rank", conn)[:10]
     rank_players.columns=["PLAYER_ID", "RANK", "PLAYER", "TEAM_ID", "TEAM", "PTS"]
     rank_players = rank_players.to_json(orient="records")
+    print(f'PLAYER = {time()-t0}')
 
+    t0 = time()
     # Player blog
     rank_players_blog = pd.read_sql("SELECT id, rank, name, team_id, team_name, pts, min, fgm, fg_pct FROM PLAYERS ORDER BY rank", conn)[:2]
     rank_players_blog.columns=["PLAYER_ID", "RANK", "PLAYER", "TEAM_ID", "TEAM", "PTS", "MIN", "FGM", "FG_PCT"]
     rank_players_blog = rank_players_blog.to_json(orient="records")
+    print(f'BLOG = {time()-t0}')
     
+    t0 = time()
     games = pd.read_sql(f"SELECT * FROM GAMESLOG WHERE GAME_ID = {game_id}", conn)
     games.columns = ['ID', 'TEAM_ID', 'GAME_ID', 'TEAM_NAME', 'FGM', 'FGA', 'FG_PCT', 'FG3M', 'FG3A', 'FG3_PCT', 'FTM', 'FTA', 'FT_PCT', 'OREB', 'DREB', 'AST', 'STL', 'BLK', 'TOV', 'PF', 'PTS', 'MATCHUP', 'GAME_DATE', 'REF']
-    
+    print(f'GAMES = {time()-t0}')
+
+    t0 = time()
+    next_games = pd.read_sql("SELECT game_id, home_team_id, home_team_tricode, home_team_name, away_team_id, away_team_tricode, away_team_name, start_time FROM GAMES WHERE start_time >= '2024-03-01'", conn)
+    next_games.columns=['game_id', 'home_team_id', 'home_team_tricode', 'home_team_name', 'away_team_id', 'away_team_tricode', 'away_team_name', 'datetime']
+    print(f'FUTURE SCHEDULE DB = {time()-t0}')
+
     # Chiudere la connessione al database
     conn.close()
 
@@ -358,9 +371,14 @@ def game_details():
     away_stats['FG_PCT'] = int(round(away_stats['FG_PCT'].iloc[0],2)*100)
     away_stats['FG3_PCT'] = int(round(away_stats['FG3_PCT'].iloc[0],2)*100)
     away_stats['FT_PCT'] = int(round(away_stats['FT_PCT'].iloc[0],2)*100)
+    
+    t0 = time()
     next_matches = get_future_schedule_2()
+    print(f'FUTURE SCHEDULE = {time()-t0}')
     home_tid = home_stats['TEAM_ID'].iloc[0]
     away_tid = away_stats['TEAM_ID'].iloc[0]
+
+    to = time()
     # Upcoming match home
     upcoming_matches_H = return_upcoming_match(home_tid, next_matches)
     # Upcoming match away
@@ -368,6 +386,7 @@ def game_details():
     next = return_next_match(home_tid, away_tid, next_matches)
     date = game_date.split('-')
     custom_datetime = datetime(int(date[0]), int(date[1]), int(date[2]))
+    print(f'NEXT MATCHES = {time()-t0}')
 
     if custom_datetime < datetime(2024, 3, 1):
         return render_template('matches.html',
