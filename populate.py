@@ -185,7 +185,7 @@ def populate_games():
     games_results = game_logs.get_data_frames()[0]
 
     # ------- GAMES --------
-    for index, row in games.iterrows():
+    for index, row in tqdm(games.iterrows()):
         date = row['datetime'].split('-')
         custom_datetime = datetime(int(date[0]), int(date[1]), int(date[2]), int(date[3]), int(date[4]))  # Anno, mese, giorno, ora, minuto
         if custom_datetime < datetime(2024,3,1):
@@ -310,7 +310,7 @@ if __name__ == '__main__':
     with app.app_context():
         db.drop_all()
         db.create_all()
-        # populate_teams()
-        # populate_players()
+        populate_teams()
+        populate_players()
         populate_games()        
-        # populate_gameslog()
+        populate_gameslog()
