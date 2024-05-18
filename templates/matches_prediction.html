@@ -102,7 +102,7 @@
                 <h3 id="home_stats" home_stats="{{ home_stats }}"></h3>
                 <ul class="list-unstyled">
                   <li class="stat" id="home_win_pct" home_win_pct="{{ home_win_pct }}"></li>
-                  <li class="stat" id="home_strenght" away_win_pct="{{ home_strenght }}"></li>
+                  <li class="stat" id="home_starting_strength" home_starting_strength="{{ home_starting_strength }}"></li>
                 </ul>
               </div>
             </div>
@@ -110,7 +110,7 @@
               <div class="w-100 text-center">
                 <ul class="list-unstyled">
                   <li class="stat">Win Probability</li>
-                  <li class="stat">Starting Lineup strenght</li>
+                  <li class="stat">Starting Lineup strenght (FP)</li>
                   <li class="stat" id="ref" first_official="{{ first_official }}"></li>
                 </ul>
               </div>
@@ -121,7 +121,7 @@
                 <h3 id="away_stats" away_stats="{{ away_stats }}"></h3>
                 <ul class="list-unstyled">
                   <li class="stat" id="away_win_pct" away_win_pct="{{ away_win_pct }}"></li>
-                  <li class="stat" id="away_strenght" away_win_pct="{{ away_strenght }}"></li>
+                  <li class="stat" id="away_starting_strength" away_starting_strength="{{ away_starting_strength }}"></li>
                 </ul>
               </div>
             </div>
@@ -804,6 +804,13 @@
         //imposto nome
         document.getElementById("player_name_"+i).textContent = rank_players_l[i-1]['PLAYER'];
       }
+      // Starting Lineup Strength
+      const home_starting_strength = document.getElementById('home_starting_strength').getAttribute('home_starting_strength');
+      document.getElementById("home_starting_strength").textContent = home_starting_strength
+      
+      const away_starting_strength = document.getElementById('away_starting_strength').getAttribute('away_starting_strength');
+      document.getElementById("away_starting_strength").textContent = away_starting_strength
+
       // referee
       const referee = document.getElementById('ref').getAttribute('first_official');
       document.getElementById("ref").innerHTML = "<U>First official: " + referee + "</U>"

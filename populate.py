@@ -1,12 +1,11 @@
 from flask import Flask
-from functions import get_schedule, get_strength_by_abv
-from flask_sqlalchemy import SQLAlchemy, model
+from functions import get_schedule, get_strength_by_abv, get_starting_strength
+from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from tqdm import tqdm
 from nba_api.stats.endpoints import leaguegamelog
 from nba_api.stats.endpoints import teamdetails, boxscoresummaryv2
 from nba_api.stats.endpoints import leaguestandings, leagueleaders
-import pyodbc
 import math
 
 app = Flask(__name__)
@@ -102,8 +101,9 @@ class Team(db.Model):
     losses = db.Column(db.Integer)
     win_pct = db.Column(db.Float)
     ppg = db.Column(db.Integer)
+    starting_strength = db.Column(db.Float)
 
-    def __init__(self, team_id, team_abv, team_name, strength, conference, position, wins, losses, win_pct, ppg):
+    def __init__(self, team_id, team_abv, team_name, strength, conference, position, wins, losses, win_pct, ppg, starting_strength):
         self.id = team_id
         self.abv = team_abv
         self.name = team_name
@@ -114,6 +114,7 @@ class Team(db.Model):
         self.losses = losses
         self.win_pct = win_pct
         self.ppg = ppg
+        self.starting_strength = starting_strength
 
 class GameLog(db.Model):
     __tablename__ = 'GAMESLOG'
@@ -282,10 +283,11 @@ def populate_teams():
                  losses = int(nba_league_standings['LOSSES'].iloc[0]),
                  win_pct = int(nba_league_standings['WinPCT'].iloc[0] * 100),
                  ppg = int(nba_league_standings['PointsPG'].iloc[0]),
-                 strength = 1)
-                 #strength = get_strength_by_abv(str(team_info['ABBREVIATION'].iloc[0]), stats_weights, 30))
+                 starting_strength = get_starting_strength(id),
+                 #strength = 1)
+                 strength = get_strength_by_abv(str(team_info['ABBREVIATION'].iloc[0]), stats_weights, 30))
         db.session.add(t)
-    db.session.commit()
+        db.session.commit()
 
 def populate_players():
     Player.query.delete()

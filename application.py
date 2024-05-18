@@ -157,33 +157,23 @@ def game_details():
     # first_official = get_first_official_by_game_id(game_id)
 
     conn = pyodbc.connect('DRIVER='+driver+';SERVER=tcp:'+server+';PORT=1433;DATABASE='+database+';UID='+username+';PWD='+ password)
-    
-    t0 = time()
+
     # Top players
     rank_players = pd.read_sql("SELECT id, rank, name, team_id, team_name, pts FROM PLAYERS ORDER BY rank", conn)[:10]
     rank_players.columns=["PLAYER_ID", "RANK", "PLAYER", "TEAM_ID", "TEAM", "PTS"]
     rank_players = rank_players.to_json(orient="records")
-    print(f'PLAYER = {time()-t0}')
 
-    t0 = time()
     # Player blog
     rank_players_blog = pd.read_sql("SELECT id, rank, name, team_id, team_name, pts, min, fgm, fg_pct FROM PLAYERS ORDER BY rank", conn)[:2]
     rank_players_blog.columns=["PLAYER_ID", "RANK", "PLAYER", "TEAM_ID", "TEAM", "PTS", "MIN", "FGM", "FG_PCT"]
     rank_players_blog = rank_players_blog.to_json(orient="records")
-    print(f'BLOG = {time()-t0}')
-
-    t0 = time()
+    
     games = pd.read_sql(f"SELECT * FROM GAMESLOG WHERE GAME_ID = {game_id}", conn)
     games.columns = ['ID', 'TEAM_ID', 'GAME_ID', 'TEAM_NAME', 'FGM', 'FGA', 'FG_PCT', 'FG3M', 'FG3A', 'FG3_PCT', 'FTM', 'FTA', 'FT_PCT', 'OREB', 'DREB', 'AST', 'STL', 'BLK', 'TOV', 'PF', 'PTS', 'MATCHUP', 'GAME_DATE', 'REF']
-    print(f'GAMES = {time()-t0}')
 
-
-
-    t0 = time()
     next_matches = pd.read_sql("SELECT game_id, home_team_id, home_team_tricode, home_team_name, away_team_id, away_team_tricode, away_team_name, start_time, game_label, arena_name, arena_city FROM GAMES WHERE start_time >= '2024-03-01'", conn)
     next_matches.columns=['game_id', 'home_team_id', 'home_team_tricode', 'home_team_name', 'away_team_id', 'away_team_tricode', 'away_team_name', 'datetime', 'game_label', 'arena_name', 'arena_city']
-    print(f'FUTURE SCHEDULE DB = {time()-t0}')
-
+    
     # Chiudere la connessione al database
     conn.close()
 
@@ -206,9 +196,6 @@ def game_details():
     away_stats['FG3_PCT'] = int(round(away_stats['FG3_PCT'].iloc[0],2)*100)
     away_stats['FT_PCT'] = int(round(away_stats['FT_PCT'].iloc[0],2)*100)
     
-    t0 = time()
-    # next_matches = get_future_schedule_2()
-    print(f'FUTURE SCHEDULE = {time()-t0}')
     home_tid = home_stats['TEAM_ID'].iloc[0]
     away_tid = away_stats['TEAM_ID'].iloc[0]
 
@@ -222,6 +209,23 @@ def game_details():
     custom_datetime = datetime(int(date[0]), int(date[1]), int(date[2]))
     print(f'NEXT MATCHES = {time()-t0}')
 
+    # Prendo le forze
+    conn = pyodbc.connect('DRIVER='+driver+';SERVER=tcp:'+server+';PORT=1433;DATABASE='+database+';UID='+username+';PWD='+ password)
+    cursor = conn.cursor()
+    # Esecuzione di una query SQL
+    cursor.execute(f"SELECT starting_strength FROM TEAMS WHERE id = {home_tid}")
+    # Ottenere i risultati della query
+    home_starting_strength = cursor.fetchall()[0][0]
+
+    # Esecuzione di una query SQL
+    cursor.execute(f"SELECT starting_strength FROM TEAMS WHERE id = {away_tid}")
+    # Ottenere i risultati della query
+    away_starting_strength = cursor.fetchall()[0][0]
+    
+    # Chiudere il cursore e la connessione al database
+    cursor.close()
+    conn.close()
+
     if custom_datetime < datetime(2024, 3, 1):
         return render_template('matches.html',
                             first_official=first_official,
@@ -231,9 +235,11 @@ def game_details():
                             upcoming_matches_H = upcoming_matches_H,
                             upcoming_matches_A = upcoming_matches_A,
                             rank_players = rank_players,
-                            rank_players_blog = rank_players_blog)
+                            rank_players_blog = rank_players_blog,
+                            home_starting_strength = home_starting_strength,
+                            away_starting_strength = away_starting_strength)
 
-    # Predno le forze
+    # Prendo le forze
     conn = pyodbc.connect('DRIVER='+driver+';SERVER=tcp:'+server+';PORT=1433;DATABASE='+database+';UID='+username+';PWD='+ password)
     cursor = conn.cursor()
     # Esecuzione di una query SQL
@@ -264,7 +270,9 @@ def game_details():
                             rank_players = rank_players,
                             home_win_pct = home_win_pct,
                             away_win_pct = away_win_pct,
-                            rank_players_blog = rank_players_blog)
+                            rank_players_blog = rank_players_blog,
+                            home_starting_strength = home_starting_strength,
+                            away_starting_strength = away_starting_strength)
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -117,7 +117,7 @@
                   <li class="stat" id="home_blk"></li>
                   <li class="stat" id="home_tov"></li>
                   <li class="stat" id="home_pf"></li>
-                  <li class="stat" id="home_strenght" away_win_pct="{{ home_strenght }}"></li>
+                  <li class="stat" id="home_starting_strength" home_starting_strength="{{ home_starting_strength }}"></li>
                 </ul>
               </div>
             </div>
@@ -140,7 +140,7 @@
                   <li class="stat">BLK</li>
                   <li class="stat">TOV</li>
                   <li class="stat">PF</li>
-                  <li class="stat">Starting Lineup strenght</li>
+                  <li class="stat">Starting Lineup strenght (FP)</li>
                   <li class="stat" id="ref" first_official="{{ first_official }}"></li>
                 </ul>
               </div>
@@ -166,7 +166,7 @@
                   <li class="stat" id="away_blk"></li>
                   <li class="stat" id="away_tov"></li>
                   <li class="stat" id="away_pf"></li>
-                  <li class="stat" id="away_strenght" away_win_pct="{{ away_strenght }}"></li>
+                  <li class="stat" id="away_starting_strength" away_starting_strength="{{ away_starting_strength }}"></li>
                 </ul>
               </div>
             </div>
@@ -785,8 +785,6 @@
       document.getElementById('location_upcoming_match_H_2').textContent = upcoming_match_H[1]['arena_name'] + " - " + upcoming_match_H[1]['arena_city'];
 
 
-
-
     //imposto partite upcoming match A
 
       //prima partita
@@ -837,19 +835,7 @@
       document.getElementById("score").textContent = home_stats['PTS']+" - "+away_stats['PTS'];
 
       // Statistiche squadra casa
-      if (home_stats['FGM'] <= away_stats['FGM']){
-        if (home_stats['FGM'] == away_stats['FGM']){
-          document.getElementById("home_fgm").innerHTML = home_stats['FGM']
-          document.getElementById("away_fgm").innerHTML = away_stats['FGM']
-        }else{
-          document.getElementById("home_fgm").innerHTML = home_stats['FGM']
-          document.getElementById("away_fgm").innerHTML = "<U>"+away_stats['FGM']+"</U>"
-        }
-      }else{
-        document.getElementById("home_fgm").innerHTML = "<U>"+home_stats['FGM']+"</U>"
-        document.getElementById("away_fgm").innerHTML = away_stats['FGM']
-      }
-      
+      document.getElementById("home_fgm").innerHTML = home_stats['FGM']
       document.getElementById("home_fga").innerHTML = home_stats['FGA']
       document.getElementById("home_fg_pct").innerHTML = home_stats['FG_PCT'] + '%'
       document.getElementById("home_fg3m").innerHTML = home_stats['FG3M']
@@ -867,6 +853,7 @@
       document.getElementById("home_pf").innerHTML = home_stats['PF']
 
       // Statistiche squadra trasferta
+      document.getElementById("away_fgm").innerHTML = away_stats['FGM']
       document.getElementById("away_fga").innerHTML = away_stats['FGA']
       document.getElementById("away_fg_pct").innerHTML = away_stats['FG_PCT'] + '%'
       document.getElementById("away_fg3m").innerHTML = away_stats['FG3M']
@@ -882,6 +869,13 @@
       document.getElementById("away_blk").innerHTML = away_stats['BLK']
       document.getElementById("away_tov").innerHTML = away_stats['TOV']
       document.getElementById("away_pf").innerHTML = away_stats['PF']
+      
+      // Starting Lineup Strength
+      const home_starting_strength = document.getElementById('home_starting_strength').getAttribute('home_starting_strength');
+      document.getElementById("home_starting_strength").textContent = home_starting_strength
+      
+      const away_starting_strength = document.getElementById('away_starting_strength').getAttribute('away_starting_strength');
+      document.getElementById("away_starting_strength").textContent = away_starting_strength
 
       // referee
       const referee = document.getElementById('ref').getAttribute('first_official');

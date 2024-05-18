@@ -1,25 +1,12 @@
 from nba_api.stats.endpoints import boxscoresummaryv2
-from nba_api.stats.endpoints import boxscoretraditionalv2
-from datetime import datetime, timedelta
+from nba_api.stats.endpoints import boxscoretraditionalv2, leaguegamefinder
+from datetime import datetime
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 import json
 from nba_api.stats.static import teams
 from nba_api.stats.endpoints import teamgamelog, leagueleaders, leaguestandings
 import numpy as np
-
-def get_team_names_and_id(game_id):
-    # Ottieni il riepilogo delle statistiche della partita dal game_id
-    boxscore_summary = boxscoretraditionalv2.BoxScoreTraditionalV2(game_id=game_id)
-    data = boxscore_summary.get_normalized_dict()
-
-    # Estrai i nomi delle squadre di casa e in trasferta
-    home_team_name = data['TeamStats'][1]['TEAM_CITY'] + " " + data['TeamStats'][1]['TEAM_NAME']
-    id_home_team = data['TeamStats'][1]['TEAM_ABBREVIATION']
-    visitor_team_name = data['TeamStats'][0]['TEAM_CITY'] + " " + data['TeamStats'][0]['TEAM_NAME']
-    id_visitor_team = data['TeamStats'][0]['TEAM_ABBREVIATION']
-    return home_team_name, id_home_team, visitor_team_name, id_visitor_team
-
 
 def get_officials_by_game_id(game_id):
     boxscore = boxscoresummaryv2.BoxScoreSummaryV2(game_id=game_id)
@@ -29,26 +16,10 @@ def get_officials_by_game_id(game_id):
         officials.append(data[i]['FIRST_NAME'] + " " + data[i]['LAST_NAME'])
     return officials
 
-
-def get_officials_by_game_id_complete(game_id):
-    boxscore = boxscoresummaryv2.BoxScoreSummaryV2(game_id=game_id)
-    data = boxscore.get_normalized_dict()['Officials']
-    officials = []
-    for i in range(0, 3):
-        officials.append(str(data[i]['OFFICIAL_ID']) + " " + data[i]['FIRST_NAME'] + " " + data[i]['LAST_NAME'] + " " + str(data[i]['JERSEY_NUM']))
-    return officials
-
-
 def get_first_official_by_game_id(game_id): 
     boxscore = boxscoresummaryv2.BoxScoreSummaryV2(game_id=game_id)
     data = boxscore.get_normalized_dict()['Officials'][0]
     first_official = data['FIRST_NAME'] + " " + data['LAST_NAME']
-    return first_official
-
-def get_first_official_by_game_id_complete(game_id): 
-    boxscore = boxscoresummaryv2.BoxScoreSummaryV2(game_id=game_id)
-    data = boxscore.get_normalized_dict()['Officials'][0]
-    first_official = str(data['OFFICIAL_ID']) + " " + data['FIRST_NAME'] + " " + data['LAST_NAME'] + " " + str(data['JERSEY_NUM'])
     return first_official
 
 def get_schedule():
@@ -215,5 +186,44 @@ def get_standings(conference):
 def get_rank_players_blog():
     # Ottieni la classifica dei migliori giocatori
     leaders = leagueleaders.LeagueLeaders()
-
     return leaders.get_data_frames()[0][["PLAYER_ID", "RANK", "PLAYER", "TEAM_ID", "TEAM", "PTS", "MIN", "FGM", "FG_PCT"]][:2].to_json(orient="records")
+
+def compute_starting_fp(player_stats):
+    # Calcola i fantasy points utilizzando le statistiche disponibili e i coefficienti appropriati
+    coeff_pts = 1.0
+    coeff_reb = 1.2
+    coeff_ast = 1.5
+    coeff_stl = 3.0
+    coeff_blk = 3.0
+    coeff_to = -1.0
+
+    fp = 0
+    for index, row in player_stats.iterrows():
+        fantasy_points = (row['PTS'] * coeff_pts +
+                        row['REB'] * coeff_reb +
+                        row['AST'] * coeff_ast +
+                        row['STL'] * coeff_stl +
+                        row['BLK'] * coeff_blk +
+                        row['TO'] * coeff_to)
+        fp = fp + fantasy_points
+    return fp
+
+def get_starting_strength(team_id):
+    # Trova le partite recenti della squadra
+    gamefinder = leaguegamefinder.LeagueGameFinder(team_id_nullable=team_id)
+    games = gamefinder.get_data_frames()[0]
+
+    # Prendi l'ID della partita più recente
+    recent_game_id = games.iloc[0]['GAME_ID']
+
+    # Ottieni i dettagli della partita
+    boxscore = boxscoretraditionalv2.BoxScoreTraditionalV2(game_id=recent_game_id)
+    players_stats = boxscore.get_data_frames()[0]
+
+    # Filtra i titolari
+    starters = players_stats[players_stats['START_POSITION'].notnull()]
+
+    # Visualizza i 5 titolari
+    players_stats = starters[(starters['START_POSITION'] != '') & (starters['TEAM_ID'] == team_id)][['PTS','REB','AST','TO','STL','BLK']]
+
+    return compute_starting_fp(players_stats)
