@@ -97,7 +97,7 @@ def return_upcoming_match(team_id, next_matches):
     cursor.close()
     conn.close()
 
-    return df.to_json(orient="records")
+    return df.to_json(orient="records") 
 
 @app.route("/test")
 def test():
