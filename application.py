@@ -1,12 +1,7 @@
 from flask import Flask, render_template, request
-from functions import get_schedule, get_first_official_by_game_id, get_strength_by_abv, get_future_schedule_2, get_rank_players, get_standings, get_rank_players_blog
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime, timedelta
+from datetime import datetime
 import pandas as pd
-from tqdm import tqdm
-from nba_api.stats.endpoints import leaguegamelog
-from nba_api.stats.endpoints import teamdetails
-from nba_api.stats.endpoints import leaguestandings, leagueleaders
 import os
 import pyodbc
 from time import time
@@ -17,8 +12,9 @@ app = Flask(__name__)
 # BASEDIR = os.path.abspath(os.path.dirname(__name__))
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+os.path.join(BASEDIR,'NBAPredict')
 #username = 'NBA-Predict'
+#password = 'SRSProject2024'
 username = os.getenv('DBUsername')
-password = 'SRSProject2024'
+password = os.getenv('DBpassword')
 server = 'nbapredictdb.database.windows.net'
 database = 'NBA-PredictDB'
 driver = 'ODBC Driver 18 for SQL Server'
