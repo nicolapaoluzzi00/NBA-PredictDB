@@ -75,25 +75,20 @@
 
     </header>
 
-    <div class="hero overlay" style="background-image: url('images/bg_3.jpg');">
+    <div class="hero overlay">
       <div class="container">
         <div class="row align-items-center">
           <div class="col-lg-8 mx-auto text-center">
             <h1 class="text-white">Match Prediction</h1>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Soluta, molestias repudiandae pariatur.</p>
+            <!--<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Soluta, molestias repudiandae pariatur.</p>-->
           </div>
         </div>
       </div>
     </div>
 
-    
-    
     <div class="container">
-      
-
       <div class="row">
         <div class="col-lg-12">
-          
           <div class="d-flex team-vs">
             <span class="score" id="score"></span>
             <div class="team-1 w-50">
@@ -301,7 +296,6 @@
                     <span class="d-block" id="time_upcoming_match_A_2"></span>
                     <strong class="text-primary" id="location_upcoming_match_A_2"></strong>
                   </p>
-
                 </div>
               
             </div>
@@ -315,7 +309,7 @@
       <div class="container">
         <div class="row">
           <div class="col-6 title-section">
-            <h2 class="heading">RANK PLAYERS</h2>
+            <h2 class="heading">Players standing</h2>
           </div>
           <div class="col-6 text-right">
             <div class="custom-nav">
@@ -477,14 +471,14 @@
     <div class="container site-section" id="blog">
       <div class="row">
         <div class="col-6 title-section">
-          <h2 class="heading" id = "rank_players_blog" rank_players_blog = "{{ rank_players_blog }}">Our Blog</h2>
+          <h2 class="heading" id = "rank_players_blog" rank_players_blog = "{{ rank_players_blog }}">Best players</h2>
         </div>
       </div>
       <div class="row">
         <div class="col-lg-6">
           <div class="custom-media d-flex">
             <div class="img mr-4">
-              <img src="images/img_1.jpg" alt="Image" class="img-fluid" id="img_blog_1">
+              <img src="" alt="Image" class="img-fluid" id="img_blog_1">
             </div>
             <div class="text">
               <span class="meta" id="date_blog_1"></span>
@@ -664,7 +658,7 @@
       // Next match (se esiste)
       const next_match_params = document.getElementById('home_stats1').getAttribute('next_match');
       var next_match = JSON.parse(next_match_params)[0]
-      console.log(next_match)
+
       if (next_match == undefined){
         document.getElementById("next_match_box").style.display = "none";
       }else{
@@ -806,10 +800,10 @@
       }
       // Starting Lineup Strength
       const home_starting_strength = document.getElementById('home_starting_strength').getAttribute('home_starting_strength');
-      document.getElementById("home_starting_strength").textContent = home_starting_strength
+      document.getElementById("home_starting_strength").textContent = Number.parseFloat(home_starting_strength).toFixed(1)
       
       const away_starting_strength = document.getElementById('away_starting_strength').getAttribute('away_starting_strength');
-      document.getElementById("away_starting_strength").textContent = away_starting_strength
+      document.getElementById("away_starting_strength").textContent = Number.parseFloat(away_starting_strength).toFixed(1)
 
       // referee
       const referee = document.getElementById('ref').getAttribute('first_official');
@@ -819,7 +813,7 @@
       const rank_players_blog_params = document.getElementById('rank_players_blog').getAttribute('rank_players_blog');
       var rank_players_blog_l = JSON.parse(rank_players_blog_params)
 
-      console.log(rank_players_blog_l)
+      // console.log(rank_players_blog_l)
 
       for (i = 1; i <= 2; i++)
       {

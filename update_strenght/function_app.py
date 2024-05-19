@@ -1,19 +1,15 @@
 import logging
 import azure.functions as func
 import pyodbc
-from flask_sqlalchemy import SQLAlchemy
+import os
 
 app = func.FunctionApp()
 
-username = 'NBA-Predict'
-password = 'SRSProject2024'
+username = os.getenv('DBUsername')
+password = os.getenv('DBpassword')
 server = 'nbapredictdb.database.windows.net'
 database = 'NBA-PredictDB'
 driver = '{ODBC Driver 17 for SQL Server}'
-
-#app.config['SQLALCHEMY_DATABASE_URI'] = f'mssql+pyodbc://{username}:{password}@{server}:1433/{database}?driver={driver}'
-#app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-#db = SQLAlchemy(app)
 
 @app.schedule(schedule="0 * * * * *", arg_name="myTimer", run_on_startup=True,
               use_monitor=True) 
