@@ -7,7 +7,7 @@ from tqdm import tqdm
 from nba_api.stats.endpoints import leaguegamelog
 from nba_api.stats.endpoints import teamdetails
 from nba_api.stats.endpoints import leaguestandings, leagueleaders
-import requests
+import os
 import pyodbc
 from time import time
 import warnings
@@ -16,7 +16,8 @@ warnings.filterwarnings('ignore')
 app = Flask(__name__)
 # BASEDIR = os.path.abspath(os.path.dirname(__name__))
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+os.path.join(BASEDIR,'NBAPredict')
-username = 'NBA-Predict'
+#username = 'NBA-Predict'
+username = os.getenv('DBUsername')
 password = 'SRSProject2024'
 server = 'nbapredictdb.database.windows.net'
 database = 'NBA-PredictDB'

@@ -248,7 +248,7 @@ def populate_gameslog():
                      fta = row['FTA'],
                      ft_pct = row['FT_PCT'],
                      oreb = row['OREB'],
-                     dreb = row['OREB'],
+                     dreb = row['DREB'],
                      ast = row['AST'],
                      stl = row['STL'],
                      blk = row['BLK'],
@@ -310,9 +310,9 @@ def populate_players():
 
 if __name__ == '__main__':
     with app.app_context():
-        db.drop_all()
-        db.create_all()
-        populate_teams()
-        populate_players()
-        populate_games()        
+        #db.drop_all()
+        #db.create_all()
+        #populate_teams()
+        #populate_players()
+        #populate_games()        
         populate_gameslog()
