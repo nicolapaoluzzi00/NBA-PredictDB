@@ -11,10 +11,10 @@ warnings.filterwarnings('ignore')
 app = Flask(__name__)
 # BASEDIR = os.path.abspath(os.path.dirname(__name__))
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+os.path.join(BASEDIR,'NBAPredict')
-#username = 'NBA-Predict'
-#password = 'SRSProject2024'
-username = os.getenv('DBUsername')
-password = os.getenv('DBpassword')
+username = 'NBA-Predict'
+password = 'SRSProject2024'
+#username = os.getenv('DBUsername')
+#password = os.getenv('DBpassword')
 server = 'nbapredictdb.database.windows.net'
 database = 'NBA-PredictDB'
 driver = 'ODBC Driver 18 for SQL Server'
