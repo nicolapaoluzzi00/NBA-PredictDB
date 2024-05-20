@@ -11,10 +11,10 @@ warnings.filterwarnings('ignore')
 app = Flask(__name__)
 # BASEDIR = os.path.abspath(os.path.dirname(__name__))
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+os.path.join(BASEDIR,'NBAPredict')
-username = 'NBA-Predict'
-password = 'SRSProject2024'
-#username = os.getenv('DBUsername')
-#password = os.getenv('DBpassword')
+#username = 'NBA-Predict'
+#password = 'SRSProject2024'
+username = os.getenv('DBUsername')
+password = os.getenv('DBpassword')
 server = 'nbapredictdb.database.windows.net'
 database = 'NBA-PredictDB'
 driver = 'ODBC Driver 18 for SQL Server'
@@ -106,9 +106,7 @@ def test():
     # # career = playercareerstats.PlayerCareerStats(player_id='203999') 
     # response = requests.get(url="https://stats.nba.com/players")
     # print(response.status_code)
-    # return render_template('test.html')
-    import os
-    os.system("python -m streamlit prova.py --server.port 8000 --server.address 0.0.0.0")
+    return render_template('test.html')
 
 @app.route("/")
 def homepage():
