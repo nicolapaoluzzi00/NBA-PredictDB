@@ -10,12 +10,22 @@ const responses = {
 };
 document.getElementById('chatbot-toggle-btn').addEventListener('click', toggleChatbot);
 document.getElementById('close-btn').addEventListener('click', toggleChatbot);
+// document.getElementById('prova').addEventListener('click', sendURL);
 document.getElementById('send-btn').addEventListener('click', sendMessage);
 document.getElementById('user-input').addEventListener('keypress', function(e) {
     if (e.key === 'Enter') {
         sendMessage();
     }
 });
+
+// function sendURL(){
+//     const userInput = document.getElementById('user-input').value.trim();
+    
+//     // Imposta il nuovo URL come href dell'elemento <a>
+//     document.getElementById('prova').href = "/test?query="+userInput;
+//     console.log("query "+userInput)
+    
+// }
 function toggleChatbot() {
     const chatbotPopup = document.getElementById('chatbot-popup');
     chatbotPopup.style.display = chatbotPopup.style.display === 'none' ? 'block' : 'none';
@@ -24,15 +34,18 @@ function sendMessage() {
     const userInput = document.getElementById('user-input').value.trim();
     if (userInput !== '') {
         appendMessage('user', userInput);
-        respondToUser(userInput.toLowerCase());
+        // respondToUser(userInput.toLowerCase());
         document.getElementById('user-input').value = '';
     }
 }
-function respondToUser(userInput) {
-    const response = responses[userInput] || responses["default"];
+function respondToUser(response) {
+    // const response = responses[userInput] || responses["default"];
+    
+
     setTimeout(function() {
         appendMessage('bot', response);
     }, 500);
+
 }
 function appendMessage(sender, message) {
     const chatBox = document.getElementById('chat-box');

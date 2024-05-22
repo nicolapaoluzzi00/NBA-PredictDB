@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, stream_template, get_template_attribute, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import pandas as pd
@@ -11,15 +11,20 @@ warnings.filterwarnings('ignore')
 app = Flask(__name__)
 # BASEDIR = os.path.abspath(os.path.dirname(__name__))
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+os.path.join(BASEDIR,'NBAPredict')
-#username = 'NBA-Predict'
-#password = 'SRSProject2024'
-username = os.getenv('DBUsername')
-password = os.getenv('DBpassword')
+username = 'NBA-Predict'
+password = 'SRSProject2024'
+# username = os.getenv('DBUsername')
+# password = os.getenv('DBpassword')
 server = 'nbapredictdb.database.windows.net'
 database = 'NBA-PredictDB'
 driver = 'ODBC Driver 18 for SQL Server'
 app.config['SQLALCHEMY_DATABASE_URI'] = f'mssql+pyodbc://{username}:{password}@{server}:1433/{database}?driver={driver}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+
+
+
+
 
 db = SQLAlchemy(app)
 
@@ -99,6 +104,11 @@ def return_upcoming_match(team_id, next_matches):
 
     return df.to_json(orient="records") 
 
+@app.route('/data', methods=['GET'])
+def get_data():
+    data = "tutto ok"
+    return data
+
 @app.route("/test")
 def test():
     # # game_logs = leaguegamelog.LeagueGameLog(season = '2023-24')
@@ -106,7 +116,18 @@ def test():
     # # career = playercareerstats.PlayerCareerStats(player_id='203999') 
     # response = requests.get(url="https://stats.nba.com/players")
     # print(response.status_code)
-    return render_template('test.html')
+    #return render_template('test.html')
+    print("qua si")
+    query = request.args.get('query')
+    print(query)
+    return_resp = get_template_attribute('chatbot.html', 'return_resp')
+    return return_resp('ti invio tutto correttamente')
+    #return stream_template("chatbot.html", resp = "ti invio tutto correttamente")
+
+@app.route("/test1")
+def test1():
+    return render_template('chatbot.html')
+
 
 @app.route("/")
 def homepage():

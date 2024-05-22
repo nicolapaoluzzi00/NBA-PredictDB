@@ -8,13 +8,14 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
     <body>
     <button id="chatbot-toggle-btn"><img src="chatbot.png" alt="buttonpng" /></button>
     <div class="chatbot-popup" id="chatbot-popup">
         <div class="chat-header">
-            <span>Chatbot | <a href="https://www.thecodinghubs.com/" target="_blank" >The Coding Hubs</a></span>
+            <!-- <h2 style="display: none" id = "resp" resp = "{% macro return_resp(content) %} {{ content }} {% endmacro %}"> </h2> -->
+            <span>Chatbot | <a href="https://www.thecodinghubs.com/" target="_blank">The Coding Hubs</a></span>
             <button id="close-btn">&times;</button>
         </div>
         <div class="chat-box" id="chat-box"></div>
@@ -28,4 +29,31 @@
     </div>
 </body>
 <script type="text/javascript" src="{{url_for('static', filename='chatbot/script.js')}}"></script>
+
+<script>
+window.onload = function(){
+    const resp = document.getElementById('resp').getAttribute('resp');
+    console.log(resp)
+}
+</script>
+
+<script>
+    $(document).ready(function() {
+        $('#send-btn').click(function() {
+            console.log("Dentro al click")
+            $.ajax({
+                url: '/data',
+                method: 'GET',
+                success: function(response) {
+                    //$('#data-container').text(`Message: ${response.message}, Number: ${response.number}`);
+                    console.log(response)
+                    respondToUser(response)
+                },
+                error: function(error) {
+                    console.log('Error:', error);
+                }
+            });
+        });
+    });
+</script>
 </html>
