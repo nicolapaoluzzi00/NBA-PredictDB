@@ -1,4 +1,4 @@
-body {
+/* .general-chatbot {
     font-family: "Poppins", sans-serif;
     margin: 0;
     padding: 0;
@@ -7,7 +7,7 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
-}
+} */
 .chat-header a{
     text-decoration:none;
     color: white;
@@ -26,16 +26,17 @@ body {
     right: 20px;
     padding: 12px 15px;
     border: none;
-    background-color: #1087FF;
+    background-color: #ee1e46;
     color: #fff;
     border-radius: 30px;
     font-size: 16px;
+    font-family: Open Sans;
     cursor: pointer;
     transition: all 0.3s ease;
     z-index: 1001; /* Ensure the button is above the chatbot popup */
 }
 #chatbot-toggle-btn:hover {
-    background-color: #0074CC;
+    background-color: #ee1e46;
 }
 .chatbot-popup {
     display: none;
@@ -50,7 +51,7 @@ body {
     z-index: 1000;
 }
 .chat-header {
-    background-color: #1087FF;
+    background-color: #ee1e46;
     color: #fff;
     padding: 15px 20px;
     border-top-left-radius: 15px;
@@ -78,7 +79,7 @@ body {
     border-top: 1px solid #ddd;
 }
 #user-input {
-    font-family: "Poppins";
+    font-family: Open Sans;
     flex: 1;
     padding: 10px;
     border: 1px solid #ddd;
@@ -86,10 +87,10 @@ body {
     outline: none;
 }
 #send-btn {
-    font-family: "Poppins", sans-serif;
+    font-family: Open Sans;
     padding: 10px 20px;
     border: none;
-    background-color: #1087FF;
+    background-color: #ee1e46;
     color: #fff;
     border-radius: 12px;
     margin-left: 10px;
@@ -97,7 +98,7 @@ body {
     transition: background-color 0.3s ease;
 }
 #send-btn:hover {
-    background-color: #0074CC;
+    background-color: #ee1e46;
 }
 .user-message {
     background-color: #f3f3f3;
@@ -119,7 +120,7 @@ body {
     right: -20px;
     margin-bottom: 7px;
     font-size: 20px;
-    background-color: #1087FF;
+    background-color: #ee1e46;
     color: #fff;
     border-radius: 50%;
     width: 30px;
@@ -130,7 +131,7 @@ body {
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
 }
 .bot-message {
-    background-color: #1087FF;
+    background-color: #ee1e46;
     color: #fff;
     padding: 14px;
     border-radius: 15px;
@@ -150,7 +151,7 @@ body {
     left: -14px;
     margin-bottom: 4px;
     font-size: 20px;
-    background-color: #1087FF;
+    background-color: #ee1e46;
     color: #fff;
     border-radius: 50%;
     width: 30px;
@@ -168,12 +169,12 @@ body {
 .button-container button {
     padding: 10px 50px;
     border: none;
-    background-color: #1087FF;
+    background-color: #ee1e46;
     color: #fff;
     border-radius: 10px;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
 .button-container button:hover {
-    background-color: #0074CC;
+    background-color: #ee1e46;
 }

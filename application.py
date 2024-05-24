@@ -11,20 +11,94 @@ warnings.filterwarnings('ignore')
 app = Flask(__name__)
 # BASEDIR = os.path.abspath(os.path.dirname(__name__))
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+os.path.join(BASEDIR,'NBAPredict')
-username = 'NBA-Predict'
-password = 'SRSProject2024'
-#username = os.getenv('DBUsername')
-#password = os.getenv('DBpassword')
+##serve in locale
+# username = 'NBA-Predict'
+# password = 'SRSProject2024'
+username = os.getenv('DBUsername')
+password = os.getenv('DBpassword')
 server = 'nbapredictdb.database.windows.net'
 database = 'NBA-PredictDB'
 driver = 'ODBC Driver 18 for SQL Server'
 app.config['SQLALCHEMY_DATABASE_URI'] = f'mssql+pyodbc://{username}:{password}@{server}:1433/{database}?driver={driver}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+################### CHATBOT ###################
+from langchain.document_loaders import HuggingFaceDatasetLoader
+from langchain_community.document_loaders.pdf import PyPDFLoader
+from langchain.text_splitter import RecursiveCharacterTextSplitter, CharacterTextSplitter
+from langchain.embeddings import HuggingFaceEmbeddings
+from langchain.vectorstores import FAISS, Chroma
+from transformers import AutoTokenizer, AutoModelForQuestionAnswering
+from transformers import AutoTokenizer, pipeline
+from langchain import HuggingFacePipeline
+from langchain.chains import RetrievalQA
+from langchain.chains.question_answering import load_qa_chain
+from langchain import HuggingFaceHub
+from langchain_community.llms import HuggingFaceEndpoint
+################### CHATBOT ###################
 
+## serve in locale
+# from dotenv import load_dotenv
+# load_dotenv("./.env")
 
+huggingface_hub = os.getenv('HUGGINGFACEHUB_API_TOKEN')
+print(huggingface_hub)
 
+path = "./games.pdf"
 
+# Loader
+loader = PyPDFLoader(path)
+data = loader.load()
+
+print("load fatto")
+
+#Document Transformers
+# Create an instance of the RecursiveCharacterTextSplitter class with specific parameters.
+# It splits text into chunks of 1000 characters each with a 150-character overlap.
+text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=100)
+# 'data' holds the text you want to split, split the text into documents using the text splitter.
+docs = text_splitter.split_documents(data)
+
+print("split fatto")
+
+#EMBEDDINGS
+# Define the path to the pre-trained model you want to use
+modelPath = "sentence-transformers/all-MiniLM-l6-v2"
+
+# Create a dictionary with model configuration options, specifying to use the CPU for computations
+model_kwargs = {'device':'cpu'}
+
+# Create a dictionary with encoding options, specifically setting 'normalize_embeddings' to False
+encode_kwargs = {'normalize_embeddings': False}
+
+# Initialize an instance of HuggingFaceEmbeddings with the specified parameters
+embeddings = HuggingFaceEmbeddings(
+    model_name=modelPath,     # Provide the pre-trained model's path
+    model_kwargs=model_kwargs, # Pass the model configuration options
+    encode_kwargs=encode_kwargs # Pass the encoding options
+)
+
+print("modello di embedd fatto")
+
+db = Chroma.from_documents(docs, embeddings)
+
+print("vector stores fatto")
+
+# Create a retriever object from the 'db' with a search configuration where it retrieves up to 4 relevant splits/documents.
+retriever = db.as_retriever(search_kwargs={"k": 4})
+
+print("retriever fatto")
+
+llm=HuggingFaceEndpoint(repo_id="mistralai/Mistral-7B-Instruct-v0.2", temperature=0.1, max_length=512)
+
+print("llm fatto")
+
+chain = RetrievalQA.from_chain_type(llm=llm,
+                                    chain_type="stuff",
+                                    retriever=retriever,
+                                    input_key="question")
+
+print("chain fatto")
 
 db = SQLAlchemy(app)
 
@@ -106,8 +180,11 @@ def return_upcoming_match(team_id, next_matches):
 
 @app.route('/data', methods=['GET'])
 def get_data():
-    data = "tutto ok"
-    return data
+    print("request ricevuta")
+    query = request.args.get('query')
+    print(query)
+    
+    return chain.run(query)
 
 @app.route("/test")
 def test():
@@ -117,11 +194,12 @@ def test():
     # response = requests.get(url="https://stats.nba.com/players")
     # print(response.status_code)
     #return render_template('test.html')
-    print("qua si")
-    query = request.args.get('query')
-    print(query)
+    query = request.args.get('param1')
+    print(f"Query: {query}")
     return_resp = get_template_attribute('chatbot.html', 'return_resp')
-    return return_resp('ti invio tutto correttamente')
+    
+    response = chain.run(query)
+    return return_resp(response)
     #return stream_template("chatbot.html", resp = "ti invio tutto correttamente")
 
 @app.route("/test1")
@@ -291,4 +369,4 @@ def game_details():
                             away_starting_strength = away_starting_strength)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)

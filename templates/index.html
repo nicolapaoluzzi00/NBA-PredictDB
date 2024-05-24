@@ -22,9 +22,26 @@
   <link rel="stylesheet" href="{{ url_for('static',filename='basket/css/aos.css') }}">
   <link rel="stylesheet" href="{{ url_for('static',filename='basket/css/style.css') }}">
   <link rel="stylesheet" href="{{ url_for('static',filename='footer/footer.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static',filename='chatbot/style.css') }}">
+
 </head>
 
 <body>
+  
+  <button id="chatbot-toggle-btn">Chatbot🦜🤖🔗</button>
+  <div class="chatbot-popup general-chatbot" id="chatbot-popup">
+      <div class="chat-header">
+          <!-- <h2 style="display: none" id = "resp" resp = "{% macro return_resp(content) %} {{ content }} {% endmacro %}"> </h2> -->
+          <span>Chatbot | NBA-Predict</span>
+          <button id="close-btn">&times;</button>
+      </div>
+      <div class="chat-box" id="chat-box"></div>
+      <div class="chat-input">
+          <input type="text" id="user-input" placeholder="Type a message...">
+          <button id="send-btn">Send</button>
+      </div>
+  </div>
+
 
   <div class="site-wrap">
 
@@ -459,10 +476,11 @@
       
     </footer>
 
-
-
   </div>
   <!-- .site-wrap -->
+
+
+
   <script type="text/javascript" src="{{url_for('static', filename='basket/js/jquery-3.3.1.min.js')}}"></script>
   <script type="text/javascript" src="{{url_for('static', filename='basket/js/jquery-migrate-3.0.1.min.js')}}"></script>
   <script type="text/javascript" src="{{url_for('static', filename='basket/js/jquery-ui.js')}}"></script>
@@ -484,7 +502,34 @@
 	<script type="text/javascript" src="{{url_for('static', filename='calendar/js/bootstrap.min.js')}}"></script>
 	<script type="text/javascript" src="{{url_for('static', filename='calendar/js/main.js')}}"></script>
 </body>
+<script type="text/javascript" src="{{url_for('static', filename='chatbot/script.js')}}"></script>
 
+<script>
+  $(document).ready(function() {
+      $('#send-btn').click(function() {
+          console.log("Dentro al click")
+          var userInput = document.getElementById('user-input').value.trim();
+          console.log(userInput)
+          console.log("userInput stampato")
+          $.ajax({
+              url: '/data',
+              method: 'GET',
+              data: {
+                  query: userInput,
+              },
+              success: function(response) {
+                  //$('#data-container').text(`Message: ${response.message}, Number: ${response.number}`);
+                  console.log(document.getElementById('user-input').value.trim())
+                  console.log(response)
+                  respondToUser(response)
+              },
+              error: function(error) {
+                  console.log('Error:', error);
+              }
+          });
+      });
+  });
+</script>
 <script>
   window.onload = function() {
     //east

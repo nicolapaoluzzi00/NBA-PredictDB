@@ -11,10 +11,13 @@ const responses = {
 document.getElementById('chatbot-toggle-btn').addEventListener('click', toggleChatbot);
 document.getElementById('close-btn').addEventListener('click', toggleChatbot);
 // document.getElementById('prova').addEventListener('click', sendURL);
-document.getElementById('send-btn').addEventListener('click', sendMessage);
+document.getElementById('send-btn').addEventListener('click', sendMessage_);
 document.getElementById('user-input').addEventListener('keypress', function(e) {
     if (e.key === 'Enter') {
-        sendMessage();
+        setTimeout(function() {
+            sendMessage();
+        }, 2000);
+        
     }
 });
 
@@ -29,6 +32,11 @@ document.getElementById('user-input').addEventListener('keypress', function(e) {
 function toggleChatbot() {
     const chatbotPopup = document.getElementById('chatbot-popup');
     chatbotPopup.style.display = chatbotPopup.style.display === 'none' ? 'block' : 'none';
+}
+function sendMessage_(){
+    setTimeout(function() {
+        sendMessage();
+    }, 100);
 }
 function sendMessage() {
     const userInput = document.getElementById('user-input').value.trim();
