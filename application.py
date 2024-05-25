@@ -36,11 +36,11 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # from dotenv import load_dotenv
 # load_dotenv("./.env")
 
-pdb.set_trace()
-huggingface_hub = os.getenv('HUGGINGFACEHUB_API_TOKEN')
-print(huggingface_hub)
+# pdb.set_trace()
+# huggingface_hub = os.getenv('HUGGINGFACEHUB_API_TOKEN')
+# print(huggingface_hub)
 
-path = "./games.pdf"
+# path = "./games.pdf"
 
 # # Loader
 # loader = PyPDFLoader(path)
