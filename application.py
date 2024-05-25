@@ -24,77 +24,77 @@ app.config['SQLALCHEMY_DATABASE_URI'] = f'mssql+pyodbc://{username}:{password}@{
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 ################### CHATBOT ###################
-from langchain_community.document_loaders.pdf import PyPDFLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.embeddings import HuggingFaceEmbeddings
-from langchain.vectorstores import Chroma, FAISS
-from langchain.chains import RetrievalQA
-from langchain_community.llms import HuggingFaceEndpoint
+# from langchain_community.document_loaders.pdf import PyPDFLoader
+# from langchain.text_splitter import RecursiveCharacterTextSplitter
+# from langchain.embeddings import HuggingFaceEmbeddings
+# from langchain.vectorstores import Chroma, FAISS
+# from langchain.chains import RetrievalQA
+# from langchain_community.llms import HuggingFaceEndpoint
 ################### CHATBOT ###################
 
 ## serve in locale
 # from dotenv import load_dotenv
 # load_dotenv("./.env")
 
-pdb.set_trace()
-huggingface_hub = os.getenv('HUGGINGFACEHUB_API_TOKEN')
-print(huggingface_hub)
+# pdb.set_trace()
+# huggingface_hub = os.getenv('HUGGINGFACEHUB_API_TOKEN')
+# print(huggingface_hub)
 
-path = "./games.pdf"
+# path = "./games.pdf"
 
-# Loader
-loader = PyPDFLoader(path)
-data = loader.load()
+# # Loader
+# loader = PyPDFLoader(path)
+# data = loader.load()
 
-print("load fatto")
+# print("load fatto")
 
-#Document Transformers
-# Create an instance of the RecursiveCharacterTextSplitter class with specific parameters.
-# It splits text into chunks of 1000 characters each with a 150-character overlap.
-text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=100)
-# 'data' holds the text you want to split, split the text into documents using the text splitter.
-docs = text_splitter.split_documents(data)
+# #Document Transformers
+# # Create an instance of the RecursiveCharacterTextSplitter class with specific parameters.
+# # It splits text into chunks of 1000 characters each with a 150-character overlap.
+# text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=100)
+# # 'data' holds the text you want to split, split the text into documents using the text splitter.
+# docs = text_splitter.split_documents(data)
 
-print("split fatto")
+# print("split fatto")
 
-#EMBEDDINGS
-# Define the path to the pre-trained model you want to use
-modelPath = "sentence-transformers/all-MiniLM-l6-v2"
+# #EMBEDDINGS
+# # Define the path to the pre-trained model you want to use
+# modelPath = "sentence-transformers/all-MiniLM-l6-v2"
 
-# Create a dictionary with model configuration options, specifying to use the CPU for computations
-model_kwargs = {'device':'cpu'}
+# # Create a dictionary with model configuration options, specifying to use the CPU for computations
+# model_kwargs = {'device':'cpu'}
 
-# Create a dictionary with encoding options, specifically setting 'normalize_embeddings' to False
-encode_kwargs = {'normalize_embeddings': False}
+# # Create a dictionary with encoding options, specifically setting 'normalize_embeddings' to False
+# encode_kwargs = {'normalize_embeddings': False}
 
-# Initialize an instance of HuggingFaceEmbeddings with the specified parameters
-embeddings = HuggingFaceEmbeddings(
-    model_name=modelPath,     # Provide the pre-trained model's path
-    model_kwargs=model_kwargs, # Pass the model configuration options
-    encode_kwargs=encode_kwargs # Pass the encoding options
-)
+# # Initialize an instance of HuggingFaceEmbeddings with the specified parameters
+# embeddings = HuggingFaceEmbeddings(
+#     model_name=modelPath,     # Provide the pre-trained model's path
+#     model_kwargs=model_kwargs, # Pass the model configuration options
+#     encode_kwargs=encode_kwargs # Pass the encoding options
+# )
 
-print("modello di embedd fatto")
+# print("modello di embedd fatto")
 
-db = FAISS.from_documents(docs, embeddings)
+# db = FAISS.from_documents(docs, embeddings)
 
-print("vector stores fatto")
+# print("vector stores fatto")
 
-# Create a retriever object from the 'db' with a search configuration where it retrieves up to 4 relevant splits/documents.
-retriever = db.as_retriever(search_kwargs={"k": 4})
+# # Create a retriever object from the 'db' with a search configuration where it retrieves up to 4 relevant splits/documents.
+# retriever = db.as_retriever(search_kwargs={"k": 4})
 
-print("retriever fatto")
+# print("retriever fatto")
 
-llm=HuggingFaceEndpoint(repo_id="mistralai/Mistral-7B-Instruct-v0.2", temperature=0.1, max_length=512)
+# llm=HuggingFaceEndpoint(repo_id="mistralai/Mistral-7B-Instruct-v0.2", temperature=0.1, max_length=512)
 
-print("llm fatto")
+# print("llm fatto")
 
-chain = RetrievalQA.from_chain_type(llm=llm,
-                                    chain_type="stuff",
-                                    retriever=retriever,
-                                    input_key="question")
+# chain = RetrievalQA.from_chain_type(llm=llm,
+#                                     chain_type="stuff",
+#                                     retriever=retriever,
+#                                     input_key="question")
 
-print("chain fatto")
+# print("chain fatto")
 
 db = SQLAlchemy(app)
 
