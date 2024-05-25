@@ -44,7 +44,7 @@ nba_api==1.4.1
 nest-asyncio==1.6.0
 numba==0.59.1
 numpy==1.26.4
-packaging==24.0
+packaging==23.2
 pandas==2.2.1
 parso==0.8.3
 pillow==10.2.0
@@ -78,6 +78,5 @@ tzdata==2024.1
 urllib3==2.2.1
 wcwidth==0.2.13
 Werkzeug==3.0.2
-streamlit
 langchain==0.2.1
 langchain_community==0.2.1
