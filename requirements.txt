@@ -130,7 +130,6 @@ PyJWT==2.3.0
 pyodbc==4.0.34
 pyOpenSSL==21.0.0
 pyparsing==2.4.7
-pyparted==3.11.7
 pypdf==4.2.0
 PyPika==0.48.9
 pyproject_hooks==1.1.0
