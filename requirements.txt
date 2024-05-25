@@ -24,7 +24,6 @@ configobj==5.0.6
 constantly==15.1.0
 cryptography==3.4.8
 dataclasses-json==0.6.6
-dbus-python==1.2.18
 Deprecated==1.2.14
 distro==1.7.0
 dnspython==2.6.1
@@ -124,7 +123,6 @@ pyasn1-modules==0.2.1
 pydantic==2.7.1
 pydantic_core==2.18.2
 Pygments==2.18.0
-PyGObject==3.42.1
 PyHamcrest==2.0.2
 PyJWT==2.3.0
 pyodbc==4.0.34
