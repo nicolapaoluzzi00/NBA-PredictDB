@@ -14,10 +14,10 @@ app = Flask(__name__)
 # BASEDIR = os.path.abspath(os.path.dirname(__name__))
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+os.path.join(BASEDIR,'NBAPredict')
 ##serve in locale
-# username = 'NBA-Predict'
-# password = 'SRSProject2024'
-username = os.getenv('DBUsername')
-password = os.getenv('DBpassword')
+username = 'NBA-Predict'
+password = 'SRSProject2024'
+# username = os.getenv('DBUsername')
+# password = os.getenv('DBpassword')
 server = 'nbapredictdb.database.windows.net'
 database = 'NBA-PredictDB'
 driver = 'ODBC Driver 18 for SQL Server'
@@ -102,14 +102,9 @@ db = SQLAlchemy(app)
 def return_next_match(home_team_id, away_team_id, next_matches):
     conn = pyodbc.connect('DRIVER='+driver+';SERVER=tcp:'+server+';PORT=1433;DATABASE='+database+';UID='+username+';PWD='+ password)
     cursor = conn.cursor()
-    # query_ = f'''
-    #     SELECT game_id, home_team_id, home_team_name, away_team_id, away_team_name, start_time
-    #     FROM GAMES
-    #     WHERE ((home_team_id = {home_team_id} AND away_team_id = {away_team_id}) OR (home_team_id = {away_team_id} AND away_team_id = {home_team_id})) AND home_pts is null
-    # '''
+    
     # Esecuzione della query
-    #cursor.execute(query_)
-    cursor.executemany(q.query1,[home_team_id, away_team_id, away_team_id, home_team_id])
+    cursor.execute(q.query1,[str(home_team_id), str(away_team_id), str(away_team_id), str(home_team_id)])
 
     # Ottenere i risultati della query
     rows = cursor.fetchall()
@@ -140,13 +135,9 @@ def return_next_match(home_team_id, away_team_id, next_matches):
 def return_upcoming_match(team_id, next_matches):
     conn = pyodbc.connect('DRIVER='+driver+';SERVER=tcp:'+server+';PORT=1433;DATABASE='+database+';UID='+username+';PWD='+ password)
     cursor = conn.cursor()
-    query_ = f'''
-        SELECT game_id, home_team_id, home_team_name, away_team_id, away_team_name, start_time
-        FROM GAMES
-        WHERE (home_team_id = {team_id} OR away_team_id = {team_id}) AND home_pts is null
-    '''
+    
     # Esecuzione della query
-    cursor.execute(query_)
+    cursor.execute(q.query2, [str(team_id), str(team_id)])
 
     # Ottenere i risultati della query
     rows = cursor.fetchall()
@@ -211,25 +202,25 @@ def homepage():
     cursor = conn.cursor()
 
     # Esecuzione di una query SQL
-    df = pd.read_sql("SELECT game_id, home_team_id, home_team_name, away_team_id, away_team_name, start_time, home_pts, away_pts FROM GAMES", conn)
+    df = pd.read_sql(q.query3, conn)
     df.columns = ['game_id', 'home_team_id', 'home_team_name', 'away_team_id', 'away_team_name', 'start_time', 'home_pts', 'away_pts']
     
     # Classifiche
-    eastStandings = pd.read_sql("SELECT position, name, wins, losses, win_pct, ppg FROM TEAMS WHERE conference = 'East' ORDER BY position", conn)
+    eastStandings = pd.read_sql(q.query4, conn)
     eastStandings.columns=['Position', 'TeamName', 'Wins', 'Losses', 'WinPCT', 'PointsPG']
     eastStandings = eastStandings.to_json(orient="records")
 
-    westStandings = pd.read_sql("SELECT position, name, wins, losses, win_pct, ppg FROM TEAMS WHERE conference = 'West' ORDER BY position", conn)
+    westStandings = pd.read_sql(q.query5, conn)
     westStandings.columns=['Position', 'TeamName', 'Wins', 'Losses', 'WinPCT', 'PointsPG']
     westStandings = westStandings.to_json(orient="records")
 
     # Top players
-    rank_players = pd.read_sql("SELECT id, rank, name, team_id, team_name, pts FROM PLAYERS ORDER BY rank", conn)[:10]
+    rank_players = pd.read_sql(q.query6, conn)[:10]
     rank_players.columns=["PLAYER_ID", "RANK", "PLAYER", "TEAM_ID", "TEAM", "PTS"]
     rank_players = rank_players.to_json(orient="records")
 
     # Player blog
-    rank_players_blog = pd.read_sql("SELECT id, rank, name, team_id, team_name, pts, min, fgm, fg_pct FROM PLAYERS ORDER BY rank", conn)[:2]
+    rank_players_blog = pd.read_sql(q.query7, conn)[:2]
     rank_players_blog.columns=["PLAYER_ID", "RANK", "PLAYER", "TEAM_ID", "TEAM", "PTS", "MIN", "FGM", "FG_PCT"]
     rank_players_blog = rank_players_blog.to_json(orient="records")
     # Chiudere il cursore e la connessione al database
@@ -251,12 +242,12 @@ def game_details():
     conn = pyodbc.connect('DRIVER='+driver+';SERVER=tcp:'+server+';PORT=1433;DATABASE='+database+';UID='+username+';PWD='+ password)
 
     # Top players
-    rank_players = pd.read_sql("SELECT id, rank, name, team_id, team_name, pts FROM PLAYERS ORDER BY rank", conn)[:10]
+    rank_players = pd.read_sql(q.query8, conn)[:10]
     rank_players.columns=["PLAYER_ID", "RANK", "PLAYER", "TEAM_ID", "TEAM", "PTS"]
     rank_players = rank_players.to_json(orient="records")
 
     # Player blog
-    rank_players_blog = pd.read_sql("SELECT id, rank, name, team_id, team_name, pts, min, fgm, fg_pct FROM PLAYERS ORDER BY rank", conn)[:2]
+    rank_players_blog = pd.read_sql(q.query9, conn)[:2]
     rank_players_blog.columns=["PLAYER_ID", "RANK", "PLAYER", "TEAM_ID", "TEAM", "PTS", "MIN", "FGM", "FG_PCT"]
     rank_players_blog = rank_players_blog.to_json(orient="records")
     
@@ -367,4 +358,4 @@ def game_details():
                             away_starting_strength = away_starting_strength)
 
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(debug=True)
