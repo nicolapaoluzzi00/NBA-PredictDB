@@ -27,7 +27,6 @@ dataclasses-json==0.6.6
 dbus-python==1.2.18
 Deprecated==1.2.14
 distro==1.7.0
-distro-info==1.1+ubuntu0.2
 dnspython==2.6.1
 email_validator==2.1.1
 exceptiongroup==1.2.1
@@ -137,9 +136,6 @@ PyPika==0.48.9
 pyproject_hooks==1.1.0
 pyrsistent==0.18.1
 pyserial==3.5
-python-apt==2.4.0+ubuntu3
-python-dateutil==2.9.0.post0
-python-debian==0.1.43+ubuntu1.1
 python-dotenv==1.0.1
 python-magic==0.4.24
 python-multipart==0.0.9
@@ -178,7 +174,6 @@ typer==0.12.3
 typing-inspect==0.9.0
 typing_extensions==4.12.0
 tzdata==2024.1
-ubuntu-pro-client==8001
 ufw==0.36.1
 ujson==5.10.0
 unattended-upgrades==0.1
