@@ -27,7 +27,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 from langchain_community.document_loaders.pdf import PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.embeddings import HuggingFaceEmbeddings
-from langchain.vectorstores import Chroma
+from langchain.vectorstores import Chroma, FAISS
 from langchain.chains import RetrievalQA
 from langchain_community.llms import HuggingFaceEndpoint
 ################### CHATBOT ###################
@@ -76,7 +76,7 @@ embeddings = HuggingFaceEmbeddings(
 
 print("modello di embedd fatto")
 
-db = Chroma.from_documents(docs, embeddings)
+db = FAISS.from_documents(docs, embeddings)
 
 print("vector stores fatto")
 
