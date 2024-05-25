@@ -24,17 +24,11 @@ app.config['SQLALCHEMY_DATABASE_URI'] = f'mssql+pyodbc://{username}:{password}@{
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 ################### CHATBOT ###################
-from langchain.document_loaders import HuggingFaceDatasetLoader
 from langchain_community.document_loaders.pdf import PyPDFLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter, CharacterTextSplitter
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.embeddings import HuggingFaceEmbeddings
-from langchain.vectorstores import FAISS, Chroma
-from transformers import AutoTokenizer, AutoModelForQuestionAnswering
-from transformers import AutoTokenizer, pipeline
-from langchain import HuggingFacePipeline
+from langchain.vectorstores import Chroma
 from langchain.chains import RetrievalQA
-from langchain.chains.question_answering import load_qa_chain
-from langchain import HuggingFaceHub
 from langchain_community.llms import HuggingFaceEndpoint
 ################### CHATBOT ###################
 
@@ -42,7 +36,7 @@ from langchain_community.llms import HuggingFaceEndpoint
 # from dotenv import load_dotenv
 # load_dotenv("./.env")
 
-pdb.set_trace()
+# pdb.set_trace()
 huggingface_hub = os.getenv('HUGGINGFACEHUB_API_TOKEN')
 print(huggingface_hub)
 
