@@ -36,7 +36,7 @@ from langchain_community.llms import HuggingFaceEndpoint
 # from dotenv import load_dotenv
 # load_dotenv("./.env")
 
-# pdb.set_trace()
+pdb.set_trace()
 huggingface_hub = os.getenv('HUGGINGFACEHUB_API_TOKEN')
 print(huggingface_hub)
 
