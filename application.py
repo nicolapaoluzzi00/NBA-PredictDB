@@ -14,10 +14,10 @@ app = Flask(__name__)
 # BASEDIR = os.path.abspath(os.path.dirname(__name__))
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+os.path.join(BASEDIR,'NBAPredict')
 ##serve in locale
-username = 'NBA-Predict'
-password = 'SRSProject2024'
-# username = os.getenv('DBUsername')
-# password = os.getenv('DBpassword')
+# username = 'NBA-Predict'
+# password = 'SRSProject2024'
+username = os.getenv('DBUsername')
+password = os.getenv('DBpassword')
 server = 'nbapredictdb.database.windows.net'
 database = 'NBA-PredictDB'
 driver = 'ODBC Driver 18 for SQL Server'
@@ -167,29 +167,29 @@ def return_upcoming_match(team_id, next_matches):
 
     return df.to_json(orient="records") 
 
-@app.route('/data', methods=['GET'])
-def get_data():
-    print("request ricevuta")
-    query = request.args.get('query')
-    print(query)
+# @app.route('/data', methods=['GET'])
+# def get_data():
+#     print("request ricevuta")
+#     query = request.args.get('query')
+#     print(query)
     
-    return chain.run(query)
+#     return chain.run(query)
 
-@app.route("/test")
-def test():
-    # # game_logs = leaguegamelog.LeagueGameLog(season = '2023-24')
-    # # Nikola Jokić
-    # # career = playercareerstats.PlayerCareerStats(player_id='203999') 
-    # response = requests.get(url="https://stats.nba.com/players")
-    # print(response.status_code)
-    #return render_template('test.html')
-    query = request.args.get('param1')
-    print(f"Query: {query}")
-    return_resp = get_template_attribute('chatbot.html', 'return_resp')
+# @app.route("/test")
+# def test():
+#     # # game_logs = leaguegamelog.LeagueGameLog(season = '2023-24')
+#     # # Nikola Jokić
+#     # # career = playercareerstats.PlayerCareerStats(player_id='203999') 
+#     # response = requests.get(url="https://stats.nba.com/players")
+#     # print(response.status_code)
+#     #return render_template('test.html')
+#     query = request.args.get('param1')
+#     print(f"Query: {query}")
+#     return_resp = get_template_attribute('chatbot.html', 'return_resp')
     
-    response = chain.run(query)
-    return return_resp(response)
-    #return stream_template("chatbot.html", resp = "ti invio tutto correttamente")
+#     response = chain.run(query)
+#     return return_resp(response)
+#     #return stream_template("chatbot.html", resp = "ti invio tutto correttamente")
 
 @app.route("/test1")
 def test1():
@@ -251,10 +251,10 @@ def game_details():
     rank_players_blog.columns=["PLAYER_ID", "RANK", "PLAYER", "TEAM_ID", "TEAM", "PTS", "MIN", "FGM", "FG_PCT"]
     rank_players_blog = rank_players_blog.to_json(orient="records")
     
-    games = pd.read_sql(f"SELECT * FROM GAMESLOG WHERE GAME_ID = {game_id}", conn)
+    games = pd.read_sql(q.query10, conn, params=[str(game_id)])
     games.columns = ['ID', 'TEAM_ID', 'GAME_ID', 'TEAM_NAME', 'FGM', 'FGA', 'FG_PCT', 'FG3M', 'FG3A', 'FG3_PCT', 'FTM', 'FTA', 'FT_PCT', 'OREB', 'DREB', 'AST', 'STL', 'BLK', 'TOV', 'PF', 'PTS', 'MATCHUP', 'GAME_DATE', 'REF']
 
-    next_matches = pd.read_sql("SELECT game_id, home_team_id, home_team_tricode, home_team_name, away_team_id, away_team_tricode, away_team_name, start_time, game_label, arena_name, arena_city FROM GAMES WHERE start_time >= '2024-03-01'", conn)
+    next_matches = pd.read_sql(q.query11, conn)
     next_matches.columns=['game_id', 'home_team_id', 'home_team_tricode', 'home_team_name', 'away_team_id', 'away_team_tricode', 'away_team_name', 'datetime', 'game_label', 'arena_name', 'arena_city']
     
     # Chiudere la connessione al database
@@ -296,12 +296,12 @@ def game_details():
     conn = pyodbc.connect('DRIVER='+driver+';SERVER=tcp:'+server+';PORT=1433;DATABASE='+database+';UID='+username+';PWD='+ password)
     cursor = conn.cursor()
     # Esecuzione di una query SQL
-    cursor.execute(f"SELECT starting_strength FROM TEAMS WHERE id = {home_tid}")
+    cursor.execute(q.query12, [str(home_tid)])
     # Ottenere i risultati della query
     home_starting_strength = cursor.fetchall()[0][0]
 
     # Esecuzione di una query SQL
-    cursor.execute(f"SELECT starting_strength FROM TEAMS WHERE id = {away_tid}")
+    cursor.execute(q.query12, [str(away_tid)])
     # Ottenere i risultati della query
     away_starting_strength = cursor.fetchall()[0][0]
     
@@ -326,12 +326,12 @@ def game_details():
     conn = pyodbc.connect('DRIVER='+driver+';SERVER=tcp:'+server+';PORT=1433;DATABASE='+database+';UID='+username+';PWD='+ password)
     cursor = conn.cursor()
     # Esecuzione di una query SQL
-    cursor.execute(f"SELECT strength FROM TEAMS WHERE id = {home_tid}")
+    cursor.execute(q.query13, [str(home_tid)])
     # Ottenere i risultati della query
     home_strength = cursor.fetchall()[0][0]
 
     # Esecuzione di una query SQL
-    cursor.execute(f"SELECT strength FROM TEAMS WHERE id = {away_tid}")
+    cursor.execute(q.query13, [str(away_tid)])
     # Ottenere i risultati della query
     away_strength = cursor.fetchall()[0][0]
     
@@ -358,4 +358,4 @@ def game_details():
                             away_starting_strength = away_starting_strength)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)

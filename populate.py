@@ -6,12 +6,14 @@ from tqdm import tqdm
 from nba_api.stats.endpoints import leaguegamelog
 from nba_api.stats.endpoints import teamdetails, boxscoresummaryv2
 from nba_api.stats.endpoints import leaguestandings, leagueleaders
-import math
+import math, os
 
 app = Flask(__name__)
 
-username = 'NBA-Predict'
-password = 'SRSProject2024'
+# username = 'NBA-Predict'
+# password = 'SRSProject2024'
+username = os.getenv('DBUsername')
+password = os.getenv('DBpassword')
 server = 'nbapredictdb.database.windows.net'
 database = 'NBA-PredictDB'
 driver = 'ODBC Driver 18 for SQL Server'
