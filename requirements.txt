@@ -20,7 +20,6 @@ chromadb==0.5.0
 click==8.1.7
 colorama==0.4.4
 coloredlogs==15.0.1
-command-not-found==0.3
 configobj==5.0.6
 constantly==15.1.0
 cryptography==3.4.8
