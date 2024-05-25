@@ -42,20 +42,20 @@ print(huggingface_hub)
 
 path = "./games.pdf"
 
-# Loader
-loader = PyPDFLoader(path)
-data = loader.load()
+# # Loader
+# loader = PyPDFLoader(path)
+# data = loader.load()
 
-print("load fatto")
+# print("load fatto")
 
-#Document Transformers
-# Create an instance of the RecursiveCharacterTextSplitter class with specific parameters.
-# It splits text into chunks of 1000 characters each with a 150-character overlap.
-text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=100)
-# 'data' holds the text you want to split, split the text into documents using the text splitter.
-docs = text_splitter.split_documents(data)
+# #Document Transformers
+# # Create an instance of the RecursiveCharacterTextSplitter class with specific parameters.
+# # It splits text into chunks of 1000 characters each with a 150-character overlap.
+# text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=100)
+# # 'data' holds the text you want to split, split the text into documents using the text splitter.
+# docs = text_splitter.split_documents(data)
 
-print("split fatto")
+# print("split fatto")
 
 # #EMBEDDINGS
 # # Define the path to the pre-trained model you want to use
