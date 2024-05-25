@@ -8,6 +8,7 @@ from time import time
 import warnings
 warnings.filterwarnings('ignore')
 import pdb
+from utility import query as q 
 
 app = Flask(__name__)
 # BASEDIR = os.path.abspath(os.path.dirname(__name__))
@@ -101,13 +102,14 @@ db = SQLAlchemy(app)
 def return_next_match(home_team_id, away_team_id, next_matches):
     conn = pyodbc.connect('DRIVER='+driver+';SERVER=tcp:'+server+';PORT=1433;DATABASE='+database+';UID='+username+';PWD='+ password)
     cursor = conn.cursor()
-    query_ = f'''
-        SELECT game_id, home_team_id, home_team_name, away_team_id, away_team_name, start_time
-        FROM GAMES
-        WHERE ((home_team_id = {home_team_id} AND away_team_id = {away_team_id}) OR (home_team_id = {away_team_id} AND away_team_id = {home_team_id})) AND home_pts is null
-    '''
+    # query_ = f'''
+    #     SELECT game_id, home_team_id, home_team_name, away_team_id, away_team_name, start_time
+    #     FROM GAMES
+    #     WHERE ((home_team_id = {home_team_id} AND away_team_id = {away_team_id}) OR (home_team_id = {away_team_id} AND away_team_id = {home_team_id})) AND home_pts is null
+    # '''
     # Esecuzione della query
-    cursor.execute(query_)
+    #cursor.execute(query_)
+    cursor.executemany(q.query1,[home_team_id, away_team_id, away_team_id, home_team_id])
 
     # Ottenere i risultati della query
     rows = cursor.fetchall()
