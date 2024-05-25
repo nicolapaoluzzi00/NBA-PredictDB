@@ -154,7 +154,6 @@ SQLAlchemy==2.0.30
 ssh-import-id==5.11
 starlette==0.37.2
 sympy==1.12
-systemd-python==234
 tenacity==8.3.0
 threadpoolctl==3.5.0
 tokenizers==0.19.1
