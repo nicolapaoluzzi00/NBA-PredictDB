@@ -12,7 +12,10 @@ For forecasting information, the [NBA API](https://github.com/swar/nba_api) pack
 For the implementation of the website, [Flask](https://flask.palletsprojects.com/en/3.0.x/) was chosen. Flask is a lightweight micro-framework for Python that offers simple yet powerful tools for creating web applications. It provides a set of essential functionalities for handling HTTP requests, managing sessions, URL routing, and error handling. Flask allows developers to start with a minimal base and add only the necessary features for their specific project.
 From a structural perspective, the Flask project is organized as follows:
 - **application.py**: The main Python file that defines the Flask app and acts as the glue between the backend written in Python and the HTML frontend.
-- **functions.py**: A Python file where various utilized functions are stored.
+- **utilities**: A folder containing the following files:
+  - **functions.py**: A Python file where various utilized functions are stored.
+  - **populate.py**: A file required to populate the remote database with all the statistics pertaining to the championship.
+  - **query.py**: A file through which the queries to be used within the code have been defined.
 - **templates**: A folder containing all the HTML pages that make up the website, along with embedded JavaScript functionalities.
 - **statics**: A folder containing "static" files such as CSS, JavaScript, Bootstrap, and images that shape the website.
 - **update**: A folder containing the necessary Python and JSON files for the realization of a specific feature.
