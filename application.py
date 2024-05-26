@@ -177,7 +177,7 @@ def return_upcoming_match(team_id, next_matches):
 
 @app.after_request
 def apply_caching(response):
-    response.headers['Content-Security-Policy'] = "frame-ancestors 'none'; form-action nba-predict.azurewebsites.net; default-src 'self' *; script-src 'none'; style-src 'none'; img-src 'none'; connect-src 'none'; frame-src 'none'; font-src 'none'; media-src 'none'; object-src 'none'; manifest-src 'none'; worker-src 'none';"
+    response.headers['Content-Security-Policy'] = "frame-ancestors 'none'; form-action nba-predict.azurewebsites.net"
     response.headers['X-Frame-Options'] = 'DENY'
     response.headers["X-Content-Type-Options"] = "nosniff"
     return response
