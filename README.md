@@ -13,7 +13,7 @@ For the implementation of the website, [Flask](https://flask.palletsprojects.com
 From a structural perspective, the Flask project is organized as follows:
 - **application.py**: The main Python file that defines the Flask app and acts as the glue between the backend written in Python and the HTML frontend.
 - **utilities**: A folder containing the following files:
-  - **functions.py**: A Python file where various utilized functions are stored.
+  - **functions.py**: A file where various utilized functions are stored.
   - **populate.py**: A file required to populate the remote database with all the statistics pertaining to the championship.
   - **query.py**: A file through which the queries to be used within the code have been defined.
 - **templates**: A folder containing all the HTML pages that make up the website, along with embedded JavaScript functionalities.
