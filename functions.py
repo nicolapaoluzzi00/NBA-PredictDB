@@ -227,3 +227,11 @@ def get_starting_strength(team_id):
     players_stats = starters[(starters['START_POSITION'] != '') & (starters['TEAM_ID'] == team_id)][['PTS','REB','AST','TO','STL','BLK']]
 
     return compute_starting_fp(players_stats)
+
+def run_chatbot(request, chain):
+    #debug 
+    print("request ricevuta")
+    query = request.args.get('query')
+    #debug
+    print(query)
+    return chain.run(query)

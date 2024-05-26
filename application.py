@@ -9,15 +9,16 @@ import warnings
 warnings.filterwarnings('ignore')
 import pdb
 from utility import query as q 
+from functions import run_chatbot
 
 app = Flask(__name__)
 # BASEDIR = os.path.abspath(os.path.dirname(__name__))
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+os.path.join(BASEDIR,'NBAPredict')
 ##serve in locale
-# username = 'NBA-Predict'
-# password = 'SRSProject2024'
-username = os.getenv('DBUsername')
-password = os.getenv('DBpassword')
+username = 'NBA-Predict'
+password = 'SRSProject2024'
+# username = os.getenv('DBUsername')
+# password = os.getenv('DBpassword')
 server = 'nbapredictdb.database.windows.net'
 database = 'NBA-PredictDB'
 driver = 'ODBC Driver 18 for SQL Server'
@@ -169,11 +170,7 @@ def return_upcoming_match(team_id, next_matches):
 
 # @app.route('/data', methods=['GET'])
 # def get_data():
-#     print("request ricevuta")
-#     query = request.args.get('query')
-#     print(query)
-    
-#     return chain.run(query)
+    # run_chatbot(request=request, chain=chain)
 
 # @app.route("/test")
 # def test():
