@@ -177,6 +177,8 @@ def return_upcoming_match(team_id, next_matches):
 
 @app.after_request
 def apply_caching(response):
+    response.headers['Content-Security-Policy'] = ""
+    response.headers['X-Frame-Options'] = 'DENY'
     response.headers["X-Content-Type-Options"] = "nosniff"
     return response
 
