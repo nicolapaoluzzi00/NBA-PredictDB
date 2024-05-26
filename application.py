@@ -9,16 +9,19 @@ import warnings
 warnings.filterwarnings('ignore')
 import pdb
 from utility import query as q 
-from functions import run_chatbot
+from utility.functions import run_chatbot
 
 app = Flask(__name__)
+
+## database locale
 # BASEDIR = os.path.abspath(os.path.dirname(__name__))
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+os.path.join(BASEDIR,'NBAPredict')
+
 ##serve in locale
-# username = 'NBA-Predict'
-# password = 'SRSProject2024'
-username = os.getenv('DBUsername')
-password = os.getenv('DBpassword')
+username = 'NBA-Predict'
+password = 'SRSProject2024'
+# username = os.getenv('DBUsername')
+# password = os.getenv('DBpassword')
 server = 'nbapredictdb.database.windows.net'
 database = 'NBA-PredictDB'
 driver = 'ODBC Driver 18 for SQL Server'
@@ -42,7 +45,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # huggingface_hub = os.getenv('HUGGINGFACEHUB_API_TOKEN')
 # print(huggingface_hub)
 
-# path = "./games.pdf"
+# path = "./data/games.pdf"
 
 # # Loader
 # loader = PyPDFLoader(path)
@@ -172,27 +175,6 @@ def return_upcoming_match(team_id, next_matches):
 # def get_data():
     # run_chatbot(request=request, chain=chain)
 
-# @app.route("/test")
-# def test():
-#     # # game_logs = leaguegamelog.LeagueGameLog(season = '2023-24')
-#     # # Nikola Jokić
-#     # # career = playercareerstats.PlayerCareerStats(player_id='203999') 
-#     # response = requests.get(url="https://stats.nba.com/players")
-#     # print(response.status_code)
-#     #return render_template('test.html')
-#     query = request.args.get('param1')
-#     print(f"Query: {query}")
-#     return_resp = get_template_attribute('chatbot.html', 'return_resp')
-    
-#     response = chain.run(query)
-#     return return_resp(response)
-#     #return stream_template("chatbot.html", resp = "ti invio tutto correttamente")
-
-@app.route("/test1")
-def test1():
-    return render_template('chatbot.html')
-
-
 @app.route("/")
 def homepage():
     conn = pyodbc.connect('DRIVER='+driver+';SERVER=tcp:'+server+';PORT=1433;DATABASE='+database+';UID='+username+';PWD='+ password)
@@ -220,6 +202,7 @@ def homepage():
     rank_players_blog = pd.read_sql(q.query7, conn)[:2]
     rank_players_blog.columns=["PLAYER_ID", "RANK", "PLAYER", "TEAM_ID", "TEAM", "PTS", "MIN", "FGM", "FG_PCT"]
     rank_players_blog = rank_players_blog.to_json(orient="records")
+    
     # Chiudere il cursore e la connessione al database
     cursor.close()
     conn.close()
@@ -234,17 +217,16 @@ def homepage():
 @app.route("/game_details")
 def game_details():
     game_id = request.args.get('game_id', '')
-    # first_official = get_first_official_by_game_id(game_id)
 
     conn = pyodbc.connect('DRIVER='+driver+';SERVER=tcp:'+server+';PORT=1433;DATABASE='+database+';UID='+username+';PWD='+ password)
 
     # Top players
-    rank_players = pd.read_sql(q.query8, conn)[:10]
+    rank_players = pd.read_sql(q.query6, conn)[:10]
     rank_players.columns=["PLAYER_ID", "RANK", "PLAYER", "TEAM_ID", "TEAM", "PTS"]
     rank_players = rank_players.to_json(orient="records")
 
     # Player blog
-    rank_players_blog = pd.read_sql(q.query9, conn)[:2]
+    rank_players_blog = pd.read_sql(q.query7, conn)[:2]
     rank_players_blog.columns=["PLAYER_ID", "RANK", "PLAYER", "TEAM_ID", "TEAM", "PTS", "MIN", "FGM", "FG_PCT"]
     rank_players_blog = rank_players_blog.to_json(orient="records")
     
@@ -260,7 +242,6 @@ def game_details():
     first_official = games['REF'].iloc[0]
     home_stats = games[(games['GAME_ID'] == game_id) & (games['MATCHUP'].str.contains('vs.'))]
     game_date = home_stats['GAME_DATE'].iloc[0].strftime('%Y-%m-%d')
-    # df['start_time'] = df['start_time'].apply(lambda x: x.strftime('%Y-%m-%d %H:%M:%S'))
     home_stats = home_stats[['TEAM_ID','TEAM_NAME', 'FGM', 'FGA', 'FG_PCT', 'FG3M',
                             'FG3A', 'FG3_PCT', 'FTM', 'FTA', 'FT_PCT', 'OREB', 'DREB', 'AST',
                             'STL', 'BLK', 'TOV', 'PF', 'PTS']]

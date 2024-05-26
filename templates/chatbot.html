@@ -11,20 +11,17 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
     <body>
-    <button id="chatbot-toggle-btn"><img src="chatbot.png" alt="buttonpng" /></button>
+    <button id="chatbot-toggle-btn">Chatbot🦜🤖🔗</button>
     <div class="chatbot-popup" id="chatbot-popup">
         <div class="chat-header">
             <!-- <h2 style="display: none" id = "resp" resp = "{% macro return_resp(content) %} {{ content }} {% endmacro %}"> </h2> -->
-            <span>Chatbot | <a href="https://www.thecodinghubs.com/" target="_blank">The Coding Hubs</a></span>
+            <span>Chatbot | NBA-Predict</span>
             <button id="close-btn">&times;</button>
         </div>
         <div class="chat-box" id="chat-box"></div>
         <div class="chat-input">
             <input type="text" id="user-input" placeholder="Type a message...">
             <button id="send-btn">Send</button>
-        </div>
-        <div class="copyright">
-            <a  href="https://www.thecodinghubs.com/" target="_blank">Build By Coding Hubs © 2024</a>
         </div>
     </div>
 </body>
@@ -41,11 +38,18 @@ window.onload = function(){
     $(document).ready(function() {
         $('#send-btn').click(function() {
             console.log("Dentro al click")
+            var userInput = document.getElementById('user-input').value.trim();
+            console.log(userInput)
+            console.log("userInput stampato")
             $.ajax({
                 url: '/data',
                 method: 'GET',
+                data: {
+                    query: userInput,
+                },
                 success: function(response) {
                     //$('#data-container').text(`Message: ${response.message}, Number: ${response.number}`);
+                    console.log(document.getElementById('user-input').value.trim())
                     console.log(response)
                     respondToUser(response)
                 },

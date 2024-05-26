@@ -261,7 +261,8 @@ def populate_gameslog():
                      game_date=row['GAME_DATE'],
                      ref = first_official)
         db.session.add(gl)
-        db.session.commit()
+    
+    db.session.commit()
 
 def populate_teams():
     Team.query.delete()
@@ -289,7 +290,8 @@ def populate_teams():
                  #strength = 1)
                  strength = get_strength_by_abv(str(team_info['ABBREVIATION'].iloc[0]), stats_weights, 30))
         db.session.add(t)
-        db.session.commit()
+    
+    db.session.commit()
 
 def populate_players():
     Player.query.delete()
@@ -308,7 +310,8 @@ def populate_players():
                    fgm = row['FGM'],
                    fg_pct = row['FG_PCT'])
         db.session.add(p)
-        db.session.commit()
+    
+    db.session.commit()
 
 if __name__ == '__main__':
     with app.app_context():

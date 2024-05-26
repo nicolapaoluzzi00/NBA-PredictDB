@@ -540,9 +540,6 @@
     // Seleziona la tabella
     var table = document.getElementById("eastStandings");
 
-    // Svuota il corpo della tabella
-    //table.innerHTML = '';
-
     // Itera sui dati della classifica e crea righe per ogni squadra
     eastStandings.forEach(function (team) {
       const rowHTML = `
@@ -556,15 +553,6 @@
           </tr>
       `;
       table.innerHTML += rowHTML;
-        //var row = table.insertRow(); // Inserisce una nuova riga nella tabella
-
-        // Inserisce le colonne con i dati della squadra
-        //row.insertCell().innerText = team['Position'];
-        //row.insertCell().innerText = team['TeamName'];
-        //row.insertCell().innerText = team['Wins'];
-        //row.insertCell().innerText = team['Losses'];
-        //row.insertCell().innerText = team['WinPCT'];
-        //row.insertCell().innerText = team['PointsPG'];
     });
     
     //west
@@ -574,9 +562,6 @@
 
     // Seleziona la tabella
     var table1 = document.getElementById("westStandings");
-
-    // Svuota il corpo della tabella
-    //table.innerHTML = '';
 
     // Itera sui dati della classifica e crea righe per ogni squadra
     westStandings.forEach(function (team) {
@@ -591,15 +576,6 @@
           </tr>
       `;
       table1.innerHTML += rowHTML;
-        //var row = table.insertRow(); // Inserisce una nuova riga nella tabella
-
-        // Inserisce le colonne con i dati della squadra
-        //row.insertCell().innerText = team['Position'];
-        //row.insertCell().innerText = team['TeamName'];
-        //row.insertCell().innerText = team['Wins'];
-        //row.insertCell().innerText = team['Losses'];
-        //row.insertCell().innerText = team['WinPCT'];
-        //row.insertCell().innerText = team['PointsPG'];
     });
 
     //rank players
