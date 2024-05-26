@@ -2,6 +2,8 @@
 <html lang="en">
 
 <head>
+  <meta http-equiv="Content-Security-Policy" content="frame-ancestors 'none'">
+  <meta content="text/html; charset=UTF-8; X-Content-Type-Options=nosniff" http-equiv="Content-Type" />
   <title>NBA-Predict &mdash; Home</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -481,7 +483,7 @@
 
 
 
-  <script type="text/javascript" src="{{url_for('static', filename='basket/js/jquery-3.3.1.min.js')}}"></script>
+  <script type="text/javascript" src="{{url_for('static', filename='basket/js/jquery-3.7.1.min.js')}}"></script>
   <script type="text/javascript" src="{{url_for('static', filename='basket/js/jquery-migrate-3.0.1.min.js')}}"></script>
   <script type="text/javascript" src="{{url_for('static', filename='basket/js/jquery-ui.js')}}"></script>
   <script type="text/javascript" src="{{url_for('static', filename='basket/js/popper.min.js')}}"></script>
@@ -507,10 +509,7 @@
 <script>
   $(document).ready(function() {
       $('#send-btn').click(function() {
-          console.log("Dentro al click")
           var userInput = document.getElementById('user-input').value.trim();
-          console.log(userInput)
-          console.log("userInput stampato")
           $.ajax({
               url: '/data',
               method: 'GET',
@@ -518,9 +517,6 @@
                   query: userInput,
               },
               success: function(response) {
-                  //$('#data-container').text(`Message: ${response.message}, Number: ${response.number}`);
-                  console.log(document.getElementById('user-input').value.trim())
-                  console.log(response)
                   respondToUser(response)
               },
               error: function(error) {
@@ -597,8 +593,6 @@
     //rank players our blog
     const rank_players_blog_params = document.getElementById('rank_players_blog').getAttribute('rank_players_blog');
     var rank_players_blog_l = JSON.parse(rank_players_blog_params)
-
-    // console.log(rank_players_blog_l)
 
     for (i = 1; i <= 2; i++)
     {

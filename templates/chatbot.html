@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta http-equiv="Content-Security-Policy" content="frame-ancestors 'none'">
+    <meta content="text/html; charset=UTF-8; X-Content-Type-Options=nosniff" http-equiv="Content-Type" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chatbot | The Coding Hubs</title>
@@ -30,17 +32,13 @@
 <script>
 window.onload = function(){
     const resp = document.getElementById('resp').getAttribute('resp');
-    console.log(resp)
 }
 </script>
 
 <script>
     $(document).ready(function() {
         $('#send-btn').click(function() {
-            console.log("Dentro al click")
             var userInput = document.getElementById('user-input').value.trim();
-            console.log(userInput)
-            console.log("userInput stampato")
             $.ajax({
                 url: '/data',
                 method: 'GET',
@@ -48,9 +46,6 @@ window.onload = function(){
                     query: userInput,
                 },
                 success: function(response) {
-                    //$('#data-container').text(`Message: ${response.message}, Number: ${response.number}`);
-                    console.log(document.getElementById('user-input').value.trim())
-                    console.log(response)
                     respondToUser(response)
                 },
                 error: function(error) {

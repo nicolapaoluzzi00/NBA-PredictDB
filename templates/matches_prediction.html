@@ -2,6 +2,8 @@
 <html lang="en">
 
 <head>
+  <meta http-equiv="Content-Security-Policy" content="frame-ancestors 'none'">
+  <meta content="text/html; charset=UTF-8; X-Content-Type-Options=nosniff" http-equiv="Content-Type" />
   <title>NBA-Predict &mdash; Match Prediction</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -572,7 +574,7 @@
 
   </div>
   <!-- .site-wrap -->
-  <script type="text/javascript" src="{{url_for('static', filename='basket/js/jquery-3.3.1.min.js')}}"></script>
+  <script type="text/javascript" src="{{url_for('static', filename='basket/js/jquery-3.7.1.min.js')}}"></script>
   <script type="text/javascript" src="{{url_for('static', filename='basket/js/jquery-migrate-3.0.1.min.js')}}"></script>
   <script type="text/javascript" src="{{url_for('static', filename='basket/js/jquery-ui.js')}}"></script>
   <script type="text/javascript" src="{{url_for('static', filename='basket/js/popper.min.js')}}"></script>
@@ -812,8 +814,6 @@
       //rank players our blog
       const rank_players_blog_params = document.getElementById('rank_players_blog').getAttribute('rank_players_blog');
       var rank_players_blog_l = JSON.parse(rank_players_blog_params)
-
-      // console.log(rank_players_blog_l)
 
       for (i = 1; i <= 2; i++)
       {
