@@ -175,6 +175,11 @@ def return_upcoming_match(team_id, next_matches):
 # def get_data():
     # run_chatbot(request=request, chain=chain)
 
+@app.after_request
+def apply_caching(response):
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    return response
+
 @app.route("/")
 def homepage():
     conn = pyodbc.connect('DRIVER='+driver+';SERVER=tcp:'+server+';PORT=1433;DATABASE='+database+';UID='+username+';PWD='+ password)
