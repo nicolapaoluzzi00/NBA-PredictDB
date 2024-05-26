@@ -17,7 +17,7 @@ app = Flask(__name__)
 # BASEDIR = os.path.abspath(os.path.dirname(__name__))
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+os.path.join(BASEDIR,'NBAPredict')
 
-##serve in locale
+#serve in locale
 # username = 'NBA-Predict'
 # password = 'SRSProject2024'
 username = os.getenv('DBUsername')
@@ -177,7 +177,7 @@ def return_upcoming_match(team_id, next_matches):
 
 @app.after_request
 def apply_caching(response):
-    response.headers['Content-Security-Policy'] = "frame-ancestors 'none'; form-action nba-predict.azurewebsites.net; default-src 'self' *"
+    response.headers['Content-Security-Policy'] = "frame-ancestors 'none'; form-action nba-predict.azurewebsites.net; default-src 'self' *; script-src 'none'; style-src 'none'; img-src 'none'; connect-src 'none'; frame-src 'none'; font-src 'none'; media-src 'none'; object-src 'none'; manifest-src 'none'; worker-src 'none';"
     response.headers['X-Frame-Options'] = 'DENY'
     response.headers["X-Content-Type-Options"] = "nosniff"
     return response
