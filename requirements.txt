@@ -75,3 +75,4 @@ urllib3==2.2.1
 wcwidth==0.2.13
 langchain==0.2.1
 langchain_community==0.2.1
+werkzeug>=3.0.6 # not directly required, pinned by Snyk to avoid a vulnerability
